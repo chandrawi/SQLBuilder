@@ -4,4 +4,14 @@ from ..Builder import BaseBuilder, SelectBuilder, InsertBuilder, UpdateBuilder, 
 
 class BaseQuery :
 
-    pass
+    query = QueryObject()
+    builder = BaseBuilder()
+
+    _options = ()
+    _statement = None
+
+    def queryObject(self) :
+        return self.query
+
+    def getBuilder(self) :
+        return self.builder
