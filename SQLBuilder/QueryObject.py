@@ -1,8 +1,10 @@
 class QueryObject :
 
     def __init__(self) :
-        self.__parts = []
-        self.__params = []
+        self.__parts = ()
+        self.__params = ()
+        self.__number = -1
+        self.__paramSet = True
         self.__bindMarkNum = '?'
         self.__bindMarkAssoc = ':'
         self.__stringQuote = '\''
@@ -14,10 +16,16 @@ class QueryObject :
         return self.__params
 
     def add(self, queryPart, paramFlag: bool = False) :
-        if paramFlag :
-            self.__params.append(queryPart)
+        if not paramFlag or self.__number < 0 :
+            if self.__paramSet :
+                self.__parts += (queryPart,)
+                self.__paramSet = False
+                self.__number += 1
+            else :
+                self.__parts = self.__parts[:self.__number] + (self.__parts[self.__number] + queryPart,)
         else :
-            self.__parts.append(queryPart)
+            self.__params += (queryPart,)
+            self.__paramSet = True
 
     def bindMarkNum(self) :
         return self.__bindMarkNum

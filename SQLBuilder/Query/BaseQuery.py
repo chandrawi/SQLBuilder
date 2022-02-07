@@ -17,13 +17,21 @@ class BaseQuery :
     def getBuilder(self) :
         return self.builder
 
-    def translate(self, translator: int) :
+    def translate(self, translator: int = 0) :
         if translator == 0 : translator = self.options[0]
+        self.queryObject = QueryObject()
         QueryTranslator.translateBuilder(self.queryObject, self.builder, translator)
 
-    def query(self, translator: int, bindingOption: int = 0) :
+    def query(self, translator: int = 0, bindingOption: int = 0) :
         if self.translateFlag :
             self.translate(translator)
             self.translateFlag = False
         if bindingOption == 0 : bindingOption = self.options[1]
         return QueryTranslator.getQuery(self.queryObject, bindingOption)
+
+    def params(self, translator: int = 0, bindingOption: int = 0) :
+        if self.translateFlag :
+            self.translate(translator)
+            self.translateFlag = False
+        if bindingOption == 0 : bindingOption = self.options[1]
+        return QueryTranslator.getParams(self.queryObject, bindingOption)

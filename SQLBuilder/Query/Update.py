@@ -9,8 +9,8 @@ class Update(BaseQuery) :
     def __init__(self, options: tuple = (), statement = None) :
         self.builder = UpdateBuilder()
         self.builder.builderType(BaseBuilder.UPDATE)
-        self._options = options
-        self._statement = statement
+        self.options = options
+        self.statement = statement
 
     def update(self, table) :
         if table :

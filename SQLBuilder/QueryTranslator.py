@@ -61,9 +61,33 @@ class QueryTranslator :
         return (bindingFlag, bindingMode)
 
     @staticmethod
-    def getQuery(query: QueryObject, bindingOption: int) :
+    def getQuery(query: QueryObject, bindingOption: int) -> str :
         (bindingFlag, bindingMode) = QueryTranslator.getBindingOption(bindingOption)
         queryString = ''
-        for part in query.parts :
-            queryString += part
+        parts = query.parts()
+        params = query.params()
+        if bindingMode : mark = query.bindMarkAssoc()
+        else : mark = query.bindMarkNum()
+        quote = query.stringQuote()
+        for i in range(len(parts)) :
+            queryString += parts[i]
+            if i < len(params) :
+                if bindingFlag :
+                    if bindingMode : queryString += (mark + 'v' + str(i))
+                    else : queryString += mark
+                else :
+                    if isinstance(params[i], str) : queryString += (quote + str(params[i]) + quote)
+                    else : queryString += str(params[i])
         return queryString
+
+    @staticmethod
+    def getParams(query: QueryObject, bindingOption: int) :
+        (bindingFlag, bindingMode) = QueryTranslator.getBindingOption(bindingOption)
+        array = {}
+        if bindingFlag :
+            if bindingMode :
+                for i, param in enumerate(query.params()) :
+                    array['v' + str(i)] = param
+            else :
+                array = query.params()
+        return array

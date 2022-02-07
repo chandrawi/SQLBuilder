@@ -9,8 +9,8 @@ class Select(BaseQuery) :
     def __init__(self, options: tuple = (), statement = None) :
         self.builder = SelectBuilder()
         self.builder.builderType(BaseBuilder.SELECT)
-        self._options = options
-        self._statement = statement
+        self.options = options
+        self.statement = statement
 
     def select(self, table) :
         if table :

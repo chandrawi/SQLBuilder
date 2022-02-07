@@ -15,12 +15,20 @@ class GenericTranslator(BaseTranslator) :
 
     def translateSelect(self, query: QueryObject, builder: SelectBuilder) :
         self.firstKeyword(query, builder.builderType())
+        self.columnList(query, builder.getColumns(), builder.countColumns())
+        self.fromTable(query, builder.getTable())
 
     def translateInsert(self, query: QueryObject, builder: InsertBuilder) :
         self.firstKeyword(query, builder.builderType())
+        self.intoTable(query, builder.getTable())
+        self.columnListInsert(query, builder.getValues(), builder.countValues())
+        self.valuesInsert(query, builder.getValues(), builder.countValues())
 
     def translateUpdate(self, query: QueryObject, builder: UpdateBuilder) :
         self.firstKeyword(query, builder.builderType())
+        self.tableSet(query, builder.getTable())
+        self.valuesUpdate(query, builder.getValues(), builder.countValues())
 
     def translateDelete(self, query: QueryObject, builder: DeleteBuilder) :
         self.firstKeyword(query, builder.builderType())
+        self.fromTable(query, builder.getTable())
