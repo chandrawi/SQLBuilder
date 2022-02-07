@@ -169,9 +169,9 @@ class Manipulation :
     def endClause(self, builder, clauseType: int) :
         lastNested = Clause.CONJUNCTIVE_NONE
         if clauseType == self.WHERE :
-            lastNested = builder.lastWhere().nestedConjunctive
+            lastNested = builder.lastWhere().nestedConjunctive()
         elif clauseType == self.HAVING :
-            lastNested = builder.lastHaving().nestedConjunctive
+            lastNested = builder.lastHaving().nestedConjunctive()
         newNested = Clause.CONJUNCTIVE_NONE
         if lastNested >= Clause.CONJUNCTIVE_END : newNested = lastNested + 1
         elif lastNested == Clause.CONJUNCTIVE_NONE : newNested = Clause.CONJUNCTIVE_END

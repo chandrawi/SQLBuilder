@@ -1,29 +1,56 @@
 class Table :
 
     def __init__(self, name: str, alias: str = '') :
-        self.name = name
-        self.alias = alias
+        self.__name = name
+        self.__alias = alias
+
+    def name(self) -> str :
+        return self.__name
+
+    def alias(self) -> str :
+        return self.__alias
 
 class Column :
 
     def __init__(self, table: str, name: str, function: str = '', alias: str = '') :
-        self.table = table
-        self.name = name
-        self.function = function
-        self.alias = alias
+        self.__table = table
+        self.__name = name
+        self.__function = function
+        self.__alias = alias
+
+    def table(self) -> str :
+        return self.__table
+
+    def name(self) -> str :
+        return self.__name
+
+    def function(self) -> str :
+        return self.__function
+
+    def alias(self) -> str :
+        return self.__alias
 
 class Value :
 
     def __init__(self, table: str, columns: tuple, values: tuple) :
-        self.table = table
+        self.__table = table
         lenCol = len(columns)
         lenVal = len(values)
         lenMin = lenCol
         if lenCol > lenVal : lenMin = lenVal
-        self.columns = ()
-        self.values = values[:lenMin]
+        self.__columns = ()
+        self.__values = values[:lenMin]
         for i in range(lenMin) :
-            self.columns += (str(columns[i]),)
+            self.__columns += (str(columns[i]),)
+
+    def table(self) -> str :
+        return self.__table
+
+    def columns(self) -> tuple :
+        return self.__columns
+
+    def values(self) -> tuple :
+        return self.__values
 
 class Clause :
 
@@ -56,17 +83,33 @@ class Clause :
     CONJUNCTIVE_END = 11
 
     def __init__(self, column, operator: int, value, conjunctive: int, nestedConjunctive: int) :
-        self.column = column
+        self.__column = column
         if operator > 0 and operator <= 14 :
-            self.operator = operator
+            self.__operator = operator
         else :
-            self.operator = self.OPERATOR_DEFAULT
-        self.value = value
+            self.__operator = self.OPERATOR_DEFAULT
+        self.__value = value
         if conjunctive >= 6 and conjunctive <= 9 :
-            self.conjunctive = conjunctive
+            self.__conjunctive = conjunctive
         else :
-            self.conjunctive = self.CONJUNCTIVE_NONE
-        self.nestedConjunctive = nestedConjunctive
+            self.__conjunctive = self.CONJUNCTIVE_NONE
+        self.__nestedConjunctive = nestedConjunctive
+
+    def column(self) :
+        return self.__column
+
+    def operator(self) -> int :
+        return self.__operator
+
+    def value(self) :
+        return self.__value
+
+    def conjunctive(self) -> int :
+        return self.__conjunctive
+
+    def nestedConjunctive(self, input: int = -1) -> int :
+        if input != -1 : self.__nestedConjunctive = input
+        return self.__nestedConjunctive
 
 class Order :
 
@@ -75,13 +118,25 @@ class Order :
     ORDER_DESC = 2
 
     def __init__(self, column: Column, orderType: int) :
-        self.column = column
-        self.orderType = orderType
+        self.__column = column
+        self.__orderType = orderType
+
+    def column(self) -> Column :
+        return self.__column
+
+    def orderType(self) -> int :
+        return self.__orderType
 
 class Limit :
 
     NOT_SET = -1
 
     def __init__(self, limit: int, offset: int) :
-        self.limit = limit
-        self.offset = offset
+        self.__limit = limit
+        self.__offset = offset
+
+    def limit(self) -> int :
+        return self.__limit
+
+    def offset(self) -> int :
+        return self.__offset

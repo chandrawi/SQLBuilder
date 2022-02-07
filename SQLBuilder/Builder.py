@@ -73,7 +73,7 @@ class SelectBuilder(BaseBuilder) :
     def editWhereNested(self, nestedConjunctive: int) :
         count = len(self._where)
         if count > 0 :
-            self._where[count-1].nestedConjunctive = nestedConjunctive
+            self._where[count-1].nestedConjunctive(nestedConjunctive)
 
     def getHaving(self) -> tuple :
         return self._having
@@ -93,7 +93,7 @@ class SelectBuilder(BaseBuilder) :
     def editHavingNested(self, nestedConjunctive: int) :
         count = len(self._having)
         if count > 0 :
-            self._having[count-1].nestedConjunctive = nestedConjunctive
+            self._having[count-1].nestedConjunctive(nestedConjunctive)
 
     def getGroup(self) -> tuple :
         return self._groupBy

@@ -6,27 +6,27 @@ from SQLBuilder.Builder import SelectBuilder, InsertBuilder, UpdateBuilder, Dele
 from SQLBuilder.Structure import Table, Column, Value, Clause, Order, Limit
 
 def table(table: Table) -> tuple :
-    return (table.name, table.alias)
+    return (table.name(), table.alias())
 
 def column(column: Column) -> tuple :
-    return (column.table, column.name, column.function, column.alias)
+    return (column.table(), column.name(), column.function(), column.alias())
 
 def value(value: Value) -> tuple :
     pairs = ()
-    for i in range(len(value.columns)) :
-        pairs = pairs + (value.columns[i], value.values[i])
+    for i in range(len(value.columns())) :
+        pairs = pairs + (value.columns()[i], value.values()[i])
     return pairs
 
 def clause(clause: Clause) -> tuple :
-    col = column(clause.column)
-    return (col, clause.operator, clause.value, clause.conjunctive, clause.nestedConjunctive)
+    col = column(clause.column())
+    return (col, clause.operator(), clause.value(), clause.conjunctive(), clause.nestedConjunctive())
 
 def order(order: Order) -> tuple :
-    col = column(order.column)
-    return (col, order.orderType)
+    col = column(order.column())
+    return (col, order.orderType())
 
 def limit(limit: Limit) -> tuple :
-    return (limit.limit, limit.offset)
+    return (limit.limit(), limit.offset())
 
 def printTable(tableObject: Table) :
     tableBreak = table(tableObject)
