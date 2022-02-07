@@ -1,4 +1,4 @@
-from .Structure import Table, Column, Value
+from .Structure import Table, Column, Value, Clause
 
 class BaseBuilder :
 
@@ -55,6 +55,46 @@ class SelectBuilder(BaseBuilder) :
     _orderBy = ()
     _limit = ()
 
+    def getWhere(self) -> tuple:
+        return self._where
+
+    def lastWhere(self) -> Clause :
+        count = len(self._where)
+        if count > 0 :
+            return self._where[count-1]
+        return None
+
+    def countWhere(self) -> int :
+        return len(self._where)
+
+    def addWhere(self, where: Clause) :
+        self._where += (where,)
+
+    def editWhereNested(self, nestedConjunctive: int) :
+        count = len(self._where)
+        if count > 0 :
+            self._where[count-1].nestedConjunctive = nestedConjunctive
+
+    def getHaving(self) -> tuple :
+        return self._having
+
+    def lastHaving(self) -> Clause :
+        count = len(self._having)
+        if count > 0 :
+            return self._having[count-1]
+        return None
+
+    def countHaving(self) -> int :
+        return len(self._having)
+
+    def addHaving(self, having: Clause) :
+        self._having += (having,)
+
+    def editHavingNested(self, nestedConjunctive: int) :
+        count = len(self._having)
+        if count > 0 :
+            self._having[count-1].nestedConjunctive = nestedConjunctive
+
 class InsertBuilder(BaseBuilder) :
 
     _limit = ()
@@ -64,7 +104,47 @@ class UpdateBuilder(BaseBuilder) :
     _where = ()
     _limit = ()
 
+    def getWhere(self) -> tuple:
+        return self._where
+
+    def lastWhere(self) -> Clause :
+        count = len(self._where)
+        if count > 0 :
+            return self._where[count-1]
+        return None
+
+    def countWhere(self) -> int :
+        return len(self._where)
+
+    def addWhere(self, where: Clause) :
+        self._where += (where,)
+
+    def editWhereNested(self, nestedConjunctive: int) :
+        count = len(self._where)
+        if count > 0 :
+            self._where[count-1].nestedConjunctive = nestedConjunctive
+
 class DeleteBuilder(BaseBuilder) :
 
     _where = ()
     _limit = ()
+
+    def getWhere(self) -> tuple:
+        return self._where
+
+    def lastWhere(self) -> Clause :
+        count = len(self._where)
+        if count > 0 :
+            return self._where[count-1]
+        return None
+
+    def countWhere(self) -> int :
+        return len(self._where)
+
+    def addWhere(self, where: Clause) :
+        self._where += (where,)
+
+    def editWhereNested(self, nestedConjunctive: int) :
+        count = len(self._where)
+        if count > 0 :
+            self._where[count-1].nestedConjunctive = nestedConjunctive
