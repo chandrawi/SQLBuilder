@@ -46,7 +46,7 @@ class Update(BaseQuery) :
         return self
 
     def endWhere(self) :
-        self.query.endClause(self.builder)
+        self.query.endClause(self.builder, self.query.WHERE)
         return self
 
     def where(self, column, operator: str, value = None) :
@@ -72,4 +72,14 @@ class Update(BaseQuery) :
     def notOrWhere(self, column, operator: str, value = None) :
         clauseObject = self.query.notOrClause(column, operator, value)
         self.builder.addWhere(clauseObject)
+        return self
+
+    def limit(self, limit, offset = None) :
+        limitObject = self.query.createLimit(limit, offset)
+        self.builder.setLimit(limitObject)
+        return self
+
+    def offset(self, offset) :
+        limitObject = self.query.offset(offset)
+        self.builder.setLimit(limitObject)
         return self

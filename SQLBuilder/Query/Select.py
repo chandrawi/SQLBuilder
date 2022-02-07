@@ -58,7 +58,7 @@ class Select(BaseQuery) :
         return self
 
     def endWhere(self) :
-        self.query.endClause(self.builder)
+        self.query.endClause(self.builder, self.query.WHERE)
         return self
 
     def where(self, column, operator: str, value = None) :
@@ -107,7 +107,7 @@ class Select(BaseQuery) :
         return self
 
     def endHaving(self) :
-        self.query.endClause(self.builder)
+        self.query.endClause(self.builder, self.query.HAVING)
         return self
 
     def having(self, column, operator: str, value = None) :
@@ -133,4 +133,54 @@ class Select(BaseQuery) :
     def notOrHaving(self, column, operator: str, value = None) :
         clauseObject = self.query.notOrClause(column, operator, value)
         self.builder.addHaving(clauseObject)
+        return self
+
+    def groupBy(self, columns) :
+        if isinstance(columns, dict) :
+            keys = tuple(columns.keys())
+            for i in range(len(keys)) :
+                columnObject = self.query.createColumn({keys[i]: columns[keys[i]]})
+                self.builder.addGroup(columnObject)
+        elif isinstance(columns, list) or isinstance(columns, tuple) :
+            for col in columns :
+                columnObject = self.query.createColumn(col)
+                self.builder.addGroup(columnObject)
+        else :
+            columnObject = self.query.createColumn(columns)
+            self.builder.addGroup(columnObject)
+        return self
+
+    def orderBy(self, columns, orderType) :
+        if isinstance(columns, dict) :
+            keys = tuple(columns.keys())
+            for i in range(len(keys)) :
+                orderObject = self.query.createOrder({keys[i]: columns[keys[i]]}, orderType)
+                self.builder.addOrder(orderObject)
+        elif isinstance(columns, list) or isinstance(columns, tuple) :
+            for col in columns :
+                orderObject = self.query.createOrder(col, orderType)
+                self.builder.addOrder(orderObject)
+        else :
+            orderObject = self.query.createOrder(columns, orderType)
+            self.builder.addOrder(orderObject)
+        return self
+
+    def orderAsc(self, column) :
+        orderObject = self.query.orderAsc(column)
+        self.builder.addOrder(orderObject)
+        return self
+
+    def orderDesc(self, column) :
+        orderObject = self.query.orderDesc(column)
+        self.builder.addOrder(orderObject)
+        return self
+
+    def limit(self, limit, offset = None) :
+        limitObject = self.query.createLimit(limit, offset)
+        self.builder.setLimit(limitObject)
+        return self
+
+    def offset(self, offset) :
+        limitObject = self.query.offset(offset)
+        self.builder.setLimit(limitObject)
         return self

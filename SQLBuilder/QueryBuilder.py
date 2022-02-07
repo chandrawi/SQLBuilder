@@ -41,4 +41,4 @@ class QueryBuilder :
         if table is None :
             table = self.table
         deleteQuery = Delete(self.options, self.statement)
-        return deleteQuery.select(table)
+        return deleteQuery.delete(table)

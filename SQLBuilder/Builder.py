@@ -1,4 +1,4 @@
-from .Structure import Table, Column, Value, Clause
+from .Structure import Table, Column, Value, Clause, Order, Limit
 
 class BaseBuilder :
 
@@ -53,7 +53,7 @@ class SelectBuilder(BaseBuilder) :
     _groupBy = ()
     _having = ()
     _orderBy = ()
-    _limit = ()
+    _limit = None
 
     def getWhere(self) -> tuple:
         return self._where
@@ -95,14 +95,52 @@ class SelectBuilder(BaseBuilder) :
         if count > 0 :
             self._having[count-1].nestedConjunctive = nestedConjunctive
 
+    def getGroup(self) -> tuple :
+        return self._groupBy
+
+    def countGroup(self) -> int :
+        return len(self._groupBy)
+
+    def addGroup(self, groupBy: Column) :
+        self._groupBy = self._groupBy + (groupBy,)
+
+    def getOrder(self) -> tuple :
+        return self._orderBy
+
+    def countOrder(self) -> int :
+        return len(self._orderBy)
+
+    def addOrder(self, orderBy: Order) :
+        self._orderBy = self._orderBy + (orderBy,)
+
+    def getLimit(self) -> tuple :
+        return self._limit
+
+    def hasLimit(self) -> bool :
+        if self._limit is None : return False
+        else : return True
+
+    def setLimit(self, limit: Limit) :
+        self._limit = limit
+
 class InsertBuilder(BaseBuilder) :
 
-    _limit = ()
+    _limit = None
+
+    def getLimit(self) -> tuple :
+        return self._limit
+
+    def hasLimit(self) -> bool :
+        if self._limit is None : return False
+        else : return True
+
+    def setLimit(self, limit: Limit) :
+        self._limit = limit
 
 class UpdateBuilder(BaseBuilder) :
 
     _where = ()
-    _limit = ()
+    _limit = None
 
     def getWhere(self) -> tuple:
         return self._where
@@ -123,11 +161,21 @@ class UpdateBuilder(BaseBuilder) :
         count = len(self._where)
         if count > 0 :
             self._where[count-1].nestedConjunctive = nestedConjunctive
+
+    def getLimit(self) -> tuple :
+        return self._limit
+
+    def hasLimit(self) -> bool :
+        if self._limit is None : return False
+        else : return True
+
+    def setLimit(self, limit: Limit) :
+        self._limit = limit
 
 class DeleteBuilder(BaseBuilder) :
 
     _where = ()
-    _limit = ()
+    _limit = None
 
     def getWhere(self) -> tuple:
         return self._where
@@ -148,3 +196,13 @@ class DeleteBuilder(BaseBuilder) :
         count = len(self._where)
         if count > 0 :
             self._where[count-1].nestedConjunctive = nestedConjunctive
+
+    def getLimit(self) -> tuple :
+        return self._limit
+
+    def hasLimit(self) -> bool :
+        if self._limit is None : return False
+        else : return True
+
+    def setLimit(self, limit: Limit) :
+        self._limit = limit

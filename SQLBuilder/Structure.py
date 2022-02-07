@@ -18,12 +18,12 @@ class Value :
         self.table = table
         lenCol = len(columns)
         lenVal = len(values)
-        if lenCol < lenVal :
-            self.columns = columns
-            self.values = values[:lenCol]
-        else :
-            self.columns = columns[:lenVal]
-            self.values = values
+        lenMin = lenCol
+        if lenCol > lenVal : lenMin = lenVal
+        self.columns = ()
+        self.values = values[:lenMin]
+        for i in range(lenMin) :
+            self.columns += (str(columns[i]),)
 
 class Clause :
 
@@ -55,15 +55,33 @@ class Clause :
     CONJUNCTIVE_NONE = 10
     CONJUNCTIVE_END = 11
 
-    def __init__(self, column, operator: int, values: int, conjunctive: int, nestedConjunctive: int) :
+    def __init__(self, column, operator: int, value, conjunctive: int, nestedConjunctive: int) :
         self.column = column
         if operator > 0 and operator <= 14 :
             self.operator = operator
         else :
             self.operator = self.OPERATOR_DEFAULT
-        self.values = values
+        self.value = value
         if conjunctive >= 6 and conjunctive <= 9 :
             self.conjunctive = conjunctive
         else :
             self.conjunctive = self.CONJUNCTIVE_NONE
         self.nestedConjunctive = nestedConjunctive
+
+class Order :
+
+    ORDER_NONE = 0
+    ORDER_ASC = 1
+    ORDER_DESC = 2
+
+    def __init__(self, column: Column, orderType: int) :
+        self.column = column
+        self.orderType = orderType
+
+class Limit :
+
+    NOT_SET = -1
+
+    def __init__(self, limit: int, offset: int) :
+        self.limit = limit
+        self.offset = offset

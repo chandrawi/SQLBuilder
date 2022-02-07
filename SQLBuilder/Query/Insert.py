@@ -31,3 +31,13 @@ class Insert(BaseQuery) :
                 valueObject = self.query.createValue(values)
                 self.builder.addValue(valueObject)
         return self
+
+    def limit(self, limit, offset = None) :
+        limitObject = self.query.createLimit(limit, offset)
+        self.builder.setLimit(limitObject)
+        return self
+
+    def offset(self, offset) :
+        limitObject = self.query.offset(offset)
+        self.builder.setLimit(limitObject)
+        return self

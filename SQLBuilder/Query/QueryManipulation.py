@@ -1,4 +1,4 @@
-from ..Structure import Table, Column, Value, Clause
+from ..Structure import Table, Column, Value, Clause, Order, Limit
 
 class QueryManipulation :
 
@@ -199,3 +199,42 @@ class QueryManipulation :
     def notOrClause(self, column, operator: str, value = None) -> Clause :
         conjunctive = self.getConjunctive(Clause.CONJUNCTIVE_NOT_OR)
         return self.createClause(column, operator, value, conjunctive)
+
+### ORDER BY QUERY ###
+
+    def createOrder(self, column, orderType) -> Order :
+        columnObject = self.createColumn(column)
+        validType = self.getOrderType(orderType)
+        return Order(columnObject, validType)
+
+    def getOrderType(self, orderType) -> int :
+        if isinstance(orderType, int) :
+            validType = orderType
+        else :
+            if orderType == 'ASCENDING' or orderType == 'ASC' or orderType == 'ascending' or orderType == 'asc' :
+                validType = Order.ORDER_ASC
+            elif orderType == 'DESCENDING' or orderType == 'DESC' or orderType == 'descending' or orderType == 'desc' :
+                validType = Order.ORDER_DESC
+            else :
+                validType = Order.ORDER_NONE
+        return validType
+
+    def orderAsc(self, column) -> Order :
+        return self.createOrder(column, Order.ORDER_ASC)
+
+    def orderDesc(self, column) -> Order :
+        return self.createOrder(column, Order.ORDER_DESC)
+
+### LIMIT AND OFFSET QUERY ###
+
+    def createLimit(self, limit, offset) -> Limit :
+        validLimit = Limit.NOT_SET
+        validOffset = Limit.NOT_SET
+        if isinstance(limit, int) :
+            if limit > 0: validLimit = limit
+        if isinstance(offset, int) :
+            if offset > 0: validOffset = offset
+        return Limit(validLimit, validOffset)
+
+    def offset(self, offset) -> Limit :
+        return self.createLimit(Limit.NOT_SET, offset)
