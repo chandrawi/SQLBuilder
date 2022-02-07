@@ -1,10 +1,10 @@
 from .BaseQuery import BaseQuery
-from .QueryManipulation import QueryManipulation
+from .Manipulation import Manipulation
 from ..Builder import BaseBuilder, SelectBuilder
 
 class Select(BaseQuery) :
 
-    query = QueryManipulation()
+    man = Manipulation()
 
     def __init__(self, options: tuple = (), statement = None) :
         self.builder = SelectBuilder()
@@ -14,14 +14,14 @@ class Select(BaseQuery) :
 
     def select(self, table) :
         if table :
-            tableObject = self.query.createTable(table)
+            tableObject = self.man.createTable(table)
             self.builder.setTable(tableObject)
         else :
             raise Exception("Table name is not defined")
         return self
 
     def column(self, column) :
-        columnObject = self.query.createColumn(column)
+        columnObject = self.man.createColumn(column)
         self.builder.addColumn(columnObject)
         return self
 
@@ -29,109 +29,109 @@ class Select(BaseQuery) :
         if isinstance(columns, dict) :
             keys = tuple(columns.keys())
             for i in range(len(keys)) :
-                columnObject = self.query.createColumn({keys[i]: columns[keys[i]]})
+                columnObject = self.man.createColumn({keys[i]: columns[keys[i]]})
                 self.builder.addColumn(columnObject)
         elif isinstance(columns, list) or isinstance(columns, tuple) :
             for col in columns :
-                columnObject = self.query.createColumn(col)
+                columnObject = self.man.createColumn(col)
                 self.builder.addColumn(columnObject)
         return self
 
     def beginWhere(self) :
-        self.query.beginClause()
+        self.man.beginClause()
         return self
 
     def beginAndWhere(self) :
-        self.query.beginAndClause()
+        self.man.beginAndClause()
         return self
 
     def beginOrWhere(self) :
-        self.query.beginOrClause()
+        self.man.beginOrClause()
         return self
 
     def beginNotAndWhere(self) :
-        self.query.beginNotAndClause()
+        self.man.beginNotAndClause()
         return self
 
     def beginNotOrWhere(self) :
-        self.query.beginNotOrClause()
+        self.man.beginNotOrClause()
         return self
 
     def endWhere(self) :
-        self.query.endClause(self.builder, self.query.WHERE)
+        self.man.endClause(self.builder, self.man.WHERE)
         return self
 
     def where(self, column, operator: str, value = None) :
-        clauseObject = self.query.andClause(column, operator, value)
+        clauseObject = self.man.andClause(column, operator, value)
         self.builder.addWhere(clauseObject)
         return self
 
     def andWhere(self, column, operator: str, value = None) :
-        clauseObject = self.query.andClause(column, operator, value)
+        clauseObject = self.man.andClause(column, operator, value)
         self.builder.addWhere(clauseObject)
         return self
 
     def orWhere(self, column, operator: str, value = None) :
-        clauseObject = self.query.orClause(column, operator, value)
+        clauseObject = self.man.orClause(column, operator, value)
         self.builder.addWhere(clauseObject)
         return self
 
     def notAndWhere(self, column, operator: str, value = None) :
-        clauseObject = self.query.notAndClause(column, operator, value)
+        clauseObject = self.man.notAndClause(column, operator, value)
         self.builder.addWhere(clauseObject)
         return self
 
     def notOrWhere(self, column, operator: str, value = None) :
-        clauseObject = self.query.notOrClause(column, operator, value)
+        clauseObject = self.man.notOrClause(column, operator, value)
         self.builder.addWhere(clauseObject)
         return self
 
     def beginHaving(self) :
-        self.query.beginClause()
+        self.man.beginClause()
         return self
 
     def beginAndHaving(self) :
-        self.query.beginAndClause()
+        self.man.beginAndClause()
         return self
 
     def beginOrHaving(self) :
-        self.query.beginOrClause()
+        self.man.beginOrClause()
         return self
 
     def beginNotAndHaving(self) :
-        self.query.beginNotAndClause()
+        self.man.beginNotAndClause()
         return self
 
     def beginNotOrHaving(self) :
-        self.query.beginNotOrClause()
+        self.man.beginNotOrClause()
         return self
 
     def endHaving(self) :
-        self.query.endClause(self.builder, self.query.HAVING)
+        self.man.endClause(self.builder, self.man.HAVING)
         return self
 
     def having(self, column, operator: str, value = None) :
-        clauseObject = self.query.andClause(column, operator, value)
+        clauseObject = self.man.andClause(column, operator, value)
         self.builder.addHaving(clauseObject)
         return self
 
     def andHaving(self, column, operator: str, value = None) :
-        clauseObject = self.query.andClause(column, operator, value)
+        clauseObject = self.man.andClause(column, operator, value)
         self.builder.addHaving(clauseObject)
         return self
 
     def orHaving(self, column, operator: str, value = None) :
-        clauseObject = self.query.orClause(column, operator, value)
+        clauseObject = self.man.orClause(column, operator, value)
         self.builder.addHaving(clauseObject)
         return self
 
     def notAndHaving(self, column, operator: str, value = None) :
-        clauseObject = self.query.notAndClause(column, operator, value)
+        clauseObject = self.man.notAndClause(column, operator, value)
         self.builder.addHaving(clauseObject)
         return self
 
     def notOrHaving(self, column, operator: str, value = None) :
-        clauseObject = self.query.notOrClause(column, operator, value)
+        clauseObject = self.man.notOrClause(column, operator, value)
         self.builder.addHaving(clauseObject)
         return self
 
@@ -139,14 +139,14 @@ class Select(BaseQuery) :
         if isinstance(columns, dict) :
             keys = tuple(columns.keys())
             for i in range(len(keys)) :
-                columnObject = self.query.createColumn({keys[i]: columns[keys[i]]})
+                columnObject = self.man.createColumn({keys[i]: columns[keys[i]]})
                 self.builder.addGroup(columnObject)
         elif isinstance(columns, list) or isinstance(columns, tuple) :
             for col in columns :
-                columnObject = self.query.createColumn(col)
+                columnObject = self.man.createColumn(col)
                 self.builder.addGroup(columnObject)
         else :
-            columnObject = self.query.createColumn(columns)
+            columnObject = self.man.createColumn(columns)
             self.builder.addGroup(columnObject)
         return self
 
@@ -154,33 +154,33 @@ class Select(BaseQuery) :
         if isinstance(columns, dict) :
             keys = tuple(columns.keys())
             for i in range(len(keys)) :
-                orderObject = self.query.createOrder({keys[i]: columns[keys[i]]}, orderType)
+                orderObject = self.man.createOrder({keys[i]: columns[keys[i]]}, orderType)
                 self.builder.addOrder(orderObject)
         elif isinstance(columns, list) or isinstance(columns, tuple) :
             for col in columns :
-                orderObject = self.query.createOrder(col, orderType)
+                orderObject = self.man.createOrder(col, orderType)
                 self.builder.addOrder(orderObject)
         else :
-            orderObject = self.query.createOrder(columns, orderType)
+            orderObject = self.man.createOrder(columns, orderType)
             self.builder.addOrder(orderObject)
         return self
 
     def orderAsc(self, column) :
-        orderObject = self.query.orderAsc(column)
+        orderObject = self.man.orderAsc(column)
         self.builder.addOrder(orderObject)
         return self
 
     def orderDesc(self, column) :
-        orderObject = self.query.orderDesc(column)
+        orderObject = self.man.orderDesc(column)
         self.builder.addOrder(orderObject)
         return self
 
     def limit(self, limit, offset = None) :
-        limitObject = self.query.createLimit(limit, offset)
+        limitObject = self.man.createLimit(limit, offset)
         self.builder.setLimit(limitObject)
         return self
 
     def offset(self, offset) :
-        limitObject = self.query.offset(offset)
+        limitObject = self.man.offset(offset)
         self.builder.setLimit(limitObject)
         return self

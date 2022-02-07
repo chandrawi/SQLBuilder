@@ -1,10 +1,10 @@
 from .BaseQuery import BaseQuery
-from .QueryManipulation import QueryManipulation
+from .Manipulation import Manipulation
 from ..Builder import BaseBuilder, DeleteBuilder
 
 class Delete(BaseQuery) :
 
-    query = QueryManipulation()
+    man = Manipulation()
 
     def __init__(self, options: tuple = (), statement = None) :
         self.builder = DeleteBuilder()
@@ -14,67 +14,67 @@ class Delete(BaseQuery) :
 
     def delete(self, table) :
         if table :
-            tableObject = self.query.createTable(table)
+            tableObject = self.man.createTable(table)
             self.builder.setTable(tableObject)
         else :
             raise Exception("Table name is not defined")
         return self
 
     def beginWhere(self) :
-        self.query.beginClause()
+        self.man.beginClause()
         return self
 
     def beginAndWhere(self) :
-        self.query.beginAndClause()
+        self.man.beginAndClause()
         return self
 
     def beginOrWhere(self) :
-        self.query.beginOrClause()
+        self.man.beginOrClause()
         return self
 
     def beginNotAndWhere(self) :
-        self.query.beginNotAndClause()
+        self.man.beginNotAndClause()
         return self
 
     def beginNotOrWhere(self) :
-        self.query.beginNotOrClause()
+        self.man.beginNotOrClause()
         return self
 
     def endWhere(self) :
-        self.query.endClause(self.builder, self.query.WHERE)
+        self.man.endClause(self.builder, self.man.WHERE)
         return self
 
     def where(self, column, operator: str, value = None) :
-        clauseObject = self.query.andClause(column, operator, value)
+        clauseObject = self.man.andClause(column, operator, value)
         self.builder.addWhere(clauseObject)
         return self
 
     def andWhere(self, column, operator: str, value = None) :
-        clauseObject = self.query.andClause(column, operator, value)
+        clauseObject = self.man.andClause(column, operator, value)
         self.builder.addWhere(clauseObject)
         return self
 
     def orWhere(self, column, operator: str, value = None) :
-        clauseObject = self.query.orClause(column, operator, value)
+        clauseObject = self.man.orClause(column, operator, value)
         self.builder.addWhere(clauseObject)
         return self
 
     def notAndWhere(self, column, operator: str, value = None) :
-        clauseObject = self.query.notAndClause(column, operator, value)
+        clauseObject = self.man.notAndClause(column, operator, value)
         self.builder.addWhere(clauseObject)
         return self
 
     def notOrWhere(self, column, operator: str, value = None) :
-        clauseObject = self.query.notOrClause(column, operator, value)
+        clauseObject = self.man.notOrClause(column, operator, value)
         self.builder.addWhere(clauseObject)
         return self
 
     def limit(self, limit, offset = None) :
-        limitObject = self.query.createLimit(limit, offset)
+        limitObject = self.man.createLimit(limit, offset)
         self.builder.setLimit(limitObject)
         return self
 
     def offset(self, offset) :
-        limitObject = self.query.offset(offset)
+        limitObject = self.man.offset(offset)
         self.builder.setLimit(limitObject)
         return self

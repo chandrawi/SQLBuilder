@@ -1,23 +1,23 @@
 from ..Structure import Table, Column, Value, Clause, Order, Limit
 
-class QueryManipulation :
+class Manipulation :
 
 ### TABLE, COLUMN, VALUES QUERY ###
 
-    _table = ''
+    table = ''
 
     def createTable(self, table) -> Table :
         name = ''
         alias = ''
         if isinstance(table, str) :
-            self._table = table
+            self.table = table
             name = table
             return Table(table)
         elif isinstance(table, dict) :
             if len(table) == 1 :
                 alias = tuple(table.keys())[0]
                 name = table[alias]
-                self._table = str(alias)
+                self.table = str(alias)
         return Table(str(name), str(alias))
 
     def createColumn(self, column) -> Column :
@@ -38,7 +38,7 @@ class QueryManipulation :
         if pos1 > 0 and pos2 > 1 :
             function = column[0:pos1]
             column = column[pos1+1:pos2]
-        table = self._table
+        table = self.table
         name = column
         split = column.split('.')
         if len(split) == 2 :
@@ -52,7 +52,7 @@ class QueryManipulation :
         if len(column) == 1 :
             alias = str(keys[0])
             column = column[keys[0]]
-        table = self._table
+        table = self.table
         name = ''
         function = ''
         if isinstance(column, str) :
@@ -67,7 +67,7 @@ class QueryManipulation :
             values = tuple(inputValue.values())
         elif isinstance(inputValue, tuple) or isinstance(inputValue, list) :
             (columns, values) = self.parseValuePair(inputValue)
-        return Value(self._table, columns, values)
+        return Value(self.table, columns, values)
 
     def parseValuePair(self, pairs) :
         columns = []
@@ -84,11 +84,11 @@ class QueryManipulation :
     WHERE = 1
     HAVING = 2
 
-    _nestedConjunctive = Clause.CONJUNCTIVE_NONE
-    _firstClause = True
+    nestedConjunctive = Clause.CONJUNCTIVE_NONE
+    firstClause = True
 
     def createClause(self, column, operator, values, conjunctive: int = -1, nestedConjunctive: int = -1) -> Clause :
-        self._firstClause = False
+        self.firstClause = False
         columnObject = self.createColumn(column)
         validOperator = self.getOperator(operator)
         validValues = self.getValues(values, operator)
@@ -143,28 +143,28 @@ class QueryManipulation :
             raise Exception('Invalid input values for Where or Having clause')
 
     def getConjunctive(self, conjunctive: int) :
-        if not self._firstClause and self._nestedConjunctive >= Clause.CONJUNCTIVE_NONE :
+        if not self.firstClause and self.nestedConjunctive >= Clause.CONJUNCTIVE_NONE :
             return conjunctive
         else :
             return Clause.CONJUNCTIVE_NONE
 
     def beginClause(self) :
-        if self._nestedConjunctive <= Clause.CONJUNCTIVE_BEGIN :
-            self._nestedConjunctive -= 1
+        if self.nestedConjunctive <= Clause.CONJUNCTIVE_BEGIN :
+            self.nestedConjunctive -= 1
         else :
-            self._nestedConjunctive = Clause.CONJUNCTIVE_BEGIN
+            self.nestedConjunctive = Clause.CONJUNCTIVE_BEGIN
 
     def beginAndClause(self) :
-        self._nestedConjunctive = Clause.CONJUNCTIVE_AND_BEGIN
+        self.nestedConjunctive = Clause.CONJUNCTIVE_AND_BEGIN
 
     def beginOrClause(self) :
-        self._nestedConjunctive = Clause.CONJUNCTIVE_OR_BEGIN
+        self.nestedConjunctive = Clause.CONJUNCTIVE_OR_BEGIN
 
     def beginNotAndClause(self) :
-        self._nestedConjunctive = Clause.CONJUNCTIVE_NOT_AND_BEGIN
+        self.nestedConjunctive = Clause.CONJUNCTIVE_NOT_AND_BEGIN
 
     def beginNotOrClause(self) :
-        self._nestedConjunctive = Clause.CONJUNCTIVE_NOT_OR_BEGIN
+        self.nestedConjunctive = Clause.CONJUNCTIVE_NOT_OR_BEGIN
 
     def endClause(self, builder, clauseType: int) :
         lastNested = Clause.CONJUNCTIVE_NONE

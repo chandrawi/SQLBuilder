@@ -1,17 +1,29 @@
 from ..QueryObject import QueryObject
-from ..Structure import Table, Column, Value
-from ..Builder import BaseBuilder, SelectBuilder, InsertBuilder, UpdateBuilder, DeleteBuilder
+from ..QueryTranslator import QueryTranslator
+from ..Builder import BaseBuilder
 
 class BaseQuery :
 
-    query = QueryObject()
     builder = BaseBuilder()
+    queryObject = QueryObject()
 
-    _options = ()
-    _statement = None
+    options = (QueryTranslator.TRANSLATOR_GENERIC, QueryTranslator.PARAM_NUM)
+    statement = None
+    translateFlag = True
 
-    def queryObject(self) :
-        return self.query
+    def getQueryObject(self) :
+        return self.queryObject
 
     def getBuilder(self) :
         return self.builder
+
+    def translate(self, translator: int) :
+        if translator == 0 : translator = self.options[0]
+        QueryTranslator.translateBuilder(self.queryObject, self.builder, translator)
+
+    def query(self, translator: int, bindingOption: int = 0) :
+        if self.translateFlag :
+            self.translate(translator)
+            self.translateFlag = False
+        if bindingOption == 0 : bindingOption = self.options[1]
+        return QueryTranslator.getQuery(self.queryObject, bindingOption)
