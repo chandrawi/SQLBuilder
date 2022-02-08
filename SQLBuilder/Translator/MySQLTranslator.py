@@ -5,13 +5,15 @@ from ..Builder import SelectBuilder, InsertBuilder, UpdateBuilder, DeleteBuilder
 class MySQLTranslator(BaseTranslator) :
 
     def __init__(self, query: QueryObject) :
-        self.quote = ""
+        query.setMarkQuote("?", ":", "\"")
+        self.quote_struct = "`"
+        self.quote_string = "'"
         self.equal = "="
         self.open_bracket = "("
         self.close_bracket = ")"
         self.dot = "."
         self.comma = ", "
-        self.end_query = ""
+        self.end_query = ";"
 
     def translateSelect(self, query: QueryObject, builder: SelectBuilder) :
         self.firstKeyword(query, builder.builderType())

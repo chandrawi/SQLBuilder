@@ -81,18 +81,23 @@ class Manipulation :
 
 ### WHERE AND HAVING CLAUSE QUERY ###
 
-    WHERE = 1
-    HAVING = 2
+    CLAUSE_DEFAULT = 0
+    CLAUSE_WHERE = 1
+    CLAUSE_HAVING = 2
 
+    clauseType = CLAUSE_DEFAULT
     nestedConjunctive = Clause.CONJUNCTIVE_NONE
-    firstClause = True
+    nestedLevel = 0
 
-    def createClause(self, column, operator, values, conjunctive: int = -1, nestedConjunctive: int = -1) -> Clause :
-        self.firstClause = False
+    def createClause(self, clauseType: int, column, operator, values, conjunctive: int) -> Clause :
         columnObject = self.createColumn(column)
         validOperator = self.getOperator(operator)
         validValues = self.getValues(values, operator)
-        return Clause(columnObject, validOperator, validValues, conjunctive, nestedConjunctive)
+        conjunctive = self.getConjunctive(clauseType, conjunctive)
+        nestedLevel = self.nestedLevel
+        self.clauseType = clauseType
+        self.nestedLevel = 0
+        return Clause(columnObject, validOperator, validValues, conjunctive, nestedLevel)
 
     def getOperator(self, operator) -> int :
         if isinstance(operator, int) :
@@ -142,63 +147,55 @@ class Manipulation :
         else :
             raise Exception('Invalid input values for Where or Having clause')
 
-    def getConjunctive(self, conjunctive: int) :
-        if not self.firstClause and self.nestedConjunctive >= Clause.CONJUNCTIVE_NONE :
-            return conjunctive
+    def getConjunctive(self, clauseType: int, conjunctive: int) -> int :
+        if clauseType == self.clauseType :
+            if conjunctive == Clause.CONJUNCTIVE_NONE :
+                if self.nestedConjunctive == Clause.CONJUNCTIVE_NONE : return Clause.CONJUNCTIVE_AND
+                else : return self.nestedConjunctive
+            else :
+                return conjunctive
         else :
             return Clause.CONJUNCTIVE_NONE
 
     def beginClause(self) :
-        if self.nestedConjunctive <= Clause.CONJUNCTIVE_BEGIN :
-            self.nestedConjunctive -= 1
-        else :
-            self.nestedConjunctive = Clause.CONJUNCTIVE_BEGIN
+        self.nestedConjunctive = Clause.CONJUNCTIVE_NONE
+        self.nestedLevel -= 1
 
     def beginAndClause(self) :
-        self.nestedConjunctive = Clause.CONJUNCTIVE_AND_BEGIN
+        self.nestedConjunctive = Clause.CONJUNCTIVE_AND
+        self.nestedLevel -= 1
 
     def beginOrClause(self) :
-        self.nestedConjunctive = Clause.CONJUNCTIVE_OR_BEGIN
+        self.nestedConjunctive = Clause.CONJUNCTIVE_OR
+        self.nestedLevel -= 1
 
     def beginNotAndClause(self) :
-        self.nestedConjunctive = Clause.CONJUNCTIVE_NOT_AND_BEGIN
+        self.nestedConjunctive = Clause.CONJUNCTIVE_NOT_AND
+        self.nestedLevel -= 1
 
     def beginNotOrClause(self) :
-        self.nestedConjunctive = Clause.CONJUNCTIVE_NOT_OR_BEGIN
+        self.nestedConjunctive = Clause.CONJUNCTIVE_NOT_OR
+        self.nestedLevel -= 1
 
-    def endClause(self, builder, clauseType: int) :
-        lastNested = Clause.CONJUNCTIVE_NONE
-        if clauseType == self.WHERE :
-            lastNested = builder.lastWhere().nestedConjunctive()
-        elif clauseType == self.HAVING :
-            lastNested = builder.lastHaving().nestedConjunctive()
-        newNested = Clause.CONJUNCTIVE_NONE
-        if lastNested >= Clause.CONJUNCTIVE_END : newNested = lastNested + 1
-        elif lastNested == Clause.CONJUNCTIVE_NONE : newNested = Clause.CONJUNCTIVE_END
-        elif lastNested == Clause.CONJUNCTIVE_AND_BEGIN : newNested = Clause.CONJUNCTIVE_AND
-        elif lastNested == Clause.CONJUNCTIVE_OR_BEGIN : newNested = Clause.CONJUNCTIVE_OR
-        elif lastNested == Clause.CONJUNCTIVE_NOT_AND_BEGIN : newNested = Clause.CONJUNCTIVE_NOT_AND
-        elif lastNested == Clause.CONJUNCTIVE_NOT_OR_BEGIN : newNested = Clause.CONJUNCTIVE_NOT_OR
-        if clauseType == self.WHERE :
-            builder.editWhereNested(newNested)
-        elif clauseType == self.HAVING :
-            builder.editHavingNested(newNested)
+    def endClause(self, clauseType: int, builder) :
+        if clauseType == self.CLAUSE_WHERE :
+            lastNested = builder.lastWhere().nestedLevel()
+            builder.editWhereNested(lastNested + 1)
+        elif clauseType == self.CLAUSE_HAVING :
+            lastNested = builder.lastHaving().nestedLevel()
+            builder.editHavingNested(lastNested + 1)
 
-    def andClause(self, column, operator: str, value = None) -> Clause :
-        conjunctive = self.getConjunctive(Clause.CONJUNCTIVE_AND)
-        return self.createClause(column, operator, value, conjunctive)
+    def andClause(self, clauseType: int, column, operator: str, value = None) -> Clause :
+        return self.createClause(clauseType, column, operator, value, Clause.CONJUNCTIVE_AND)
 
-    def orClause(self, column, operator: str, value = None) -> Clause :
-        conjunctive = self.getConjunctive(Clause.CONJUNCTIVE_OR)
-        return self.createClause(column, operator, value, conjunctive)
+    def orClause(self, clauseType: int, column, operator: str, value = None) -> Clause :
+        return self.createClause(clauseType, column, operator, value, Clause.CONJUNCTIVE_OR)
 
-    def notAndClause(self, column, operator: str, value = None) -> Clause :
-        conjunctive = self.getConjunctive(Clause.CONJUNCTIVE_NOT_AND)
-        return self.createClause(column, operator, value, conjunctive)
+    def notAndClause(self, clauseType: int, column, operator: str, value = None) -> Clause :
+        return self.createClause(clauseType, column, operator, value, Clause.CONJUNCTIVE_NOT_AND)
 
-    def notOrClause(self, column, operator: str, value = None) -> Clause :
-        conjunctive = self.getConjunctive(Clause.CONJUNCTIVE_NOT_OR)
-        return self.createClause(column, operator, value, conjunctive)
+    def notOrClause(self, clauseType: int, column, operator: str, value = None) -> Clause :
+        return self.createClause(clauseType, column, operator, value, Clause.CONJUNCTIVE_NOT_OR)
 
 ### ORDER BY QUERY ###
 

@@ -36,7 +36,7 @@ class QueryObject :
     def stringQuote(self) :
         return self.__stringQuote
 
-    def setBindMark(self, bindMarkNum: str, bindMarkAssoc: str, stringQuote: str) :
+    def setMarkQuote(self, bindMarkNum: str, bindMarkAssoc: str, stringQuote: str) :
         self.__bindMarkNum = bindMarkNum
         self.__bindMarkAssoc = bindMarkAssoc
         self.__stringQuote = stringQuote

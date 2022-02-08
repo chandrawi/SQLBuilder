@@ -46,31 +46,31 @@ class Update(BaseQuery) :
         return self
 
     def endWhere(self) :
-        self.man.endClause(self.builder, self.man.WHERE)
+        self.man.endClause(self.man.CLAUSE_WHERE, self.builder)
         return self
 
     def where(self, column, operator: str, value = None) :
-        clauseObject = self.man.andClause(column, operator, value)
+        clauseObject = self.man.andClause(self.man.CLAUSE_WHERE, column, operator, value)
         self.builder.addWhere(clauseObject)
         return self
 
     def andWhere(self, column, operator: str, value = None) :
-        clauseObject = self.man.andClause(column, operator, value)
+        clauseObject = self.man.andClause(self.man.CLAUSE_WHERE, column, operator, value)
         self.builder.addWhere(clauseObject)
         return self
 
     def orWhere(self, column, operator: str, value = None) :
-        clauseObject = self.man.orClause(column, operator, value)
+        clauseObject = self.man.orClause(self.man.CLAUSE_WHERE, column, operator, value)
         self.builder.addWhere(clauseObject)
         return self
 
     def notAndWhere(self, column, operator: str, value = None) :
-        clauseObject = self.man.notAndClause(column, operator, value)
+        clauseObject = self.man.notAndClause(self.man.CLAUSE_WHERE, column, operator, value)
         self.builder.addWhere(clauseObject)
         return self
 
     def notOrWhere(self, column, operator: str, value = None) :
-        clauseObject = self.man.notOrClause(column, operator, value)
+        clauseObject = self.man.notOrClause(self.man.CLAUSE_WHERE, column, operator, value)
         self.builder.addWhere(clauseObject)
         return self
 

@@ -70,30 +70,24 @@ class Clause :
     OPERATOR_NULL = 13
     OPERATOR_NOT_NULL = 14
 
-    CONJUNCTIVE_BEGIN = 1
-    CONJUNCTIVE_AND_BEGIN = 2
-    CONJUNCTIVE_OR_BEGIN = 3
-    CONJUNCTIVE_NOT_AND_BEGIN = 4
-    CONJUNCTIVE_NOT_OR_BEGIN = 5
-    CONJUNCTIVE_AND = 6
-    CONJUNCTIVE_OR = 7
-    CONJUNCTIVE_NOT_AND = 8
-    CONJUNCTIVE_NOT_OR = 9
-    CONJUNCTIVE_NONE = 10
-    CONJUNCTIVE_END = 11
+    CONJUNCTIVE_NONE = 0
+    CONJUNCTIVE_AND = 1
+    CONJUNCTIVE_OR = 2
+    CONJUNCTIVE_NOT_AND = 3
+    CONJUNCTIVE_NOT_OR = 4
 
-    def __init__(self, column, operator: int, value, conjunctive: int, nestedConjunctive: int) :
+    def __init__(self, column, operator: int, value, conjunctive: int, nestedLevel: int) :
         self.__column = column
         if operator > 0 and operator <= 14 :
             self.__operator = operator
         else :
             self.__operator = self.OPERATOR_DEFAULT
         self.__value = value
-        if conjunctive >= 6 and conjunctive <= 9 :
+        if conjunctive > 0 and conjunctive <= 4 :
             self.__conjunctive = conjunctive
         else :
             self.__conjunctive = self.CONJUNCTIVE_NONE
-        self.__nestedConjunctive = nestedConjunctive
+        self.__nestedLevel = nestedLevel
 
     def column(self) :
         return self.__column
@@ -107,9 +101,9 @@ class Clause :
     def conjunctive(self) -> int :
         return self.__conjunctive
 
-    def nestedConjunctive(self, input: int = -1) -> int :
-        if input != -1 : self.__nestedConjunctive = input
-        return self.__nestedConjunctive
+    def nestedLevel(self, input: int = -1) -> int :
+        if input != -1 : self.__nestedLevel = input
+        return self.__nestedLevel
 
 class Order :
 
