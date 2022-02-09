@@ -2,8 +2,9 @@ import os, sys
 parentdir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 sys.path.append(parentdir)
 
+from SQLBuilder.QueryObject import QueryObject
 from SQLBuilder.Builder import SelectBuilder, InsertBuilder, UpdateBuilder, DeleteBuilder
-from SQLBuilder.Structure import Table, Column, Value, Clause, Order, Limit
+from SQLBuilder.Builder import Table, Column, Value, Clause, Order, Limit
 
 def table(table: Table) -> tuple :
     return (table.name(), table.alias())
@@ -19,7 +20,7 @@ def value(value: Value) -> tuple :
 
 def clause(clause: Clause) -> tuple :
     col = column(clause.column())
-    return (col, clause.operator(), clause.value(), clause.conjunctive(), clause.nestedConjunctive())
+    return (col, clause.operator(), clause.value(), clause.conjunctive(), clause.nestedLevel())
 
 def order(order: Order) -> tuple :
     col = column(order.column())
@@ -93,3 +94,19 @@ def printDeleteBuilder(deleteBuilder: DeleteBuilder) :
         printClause(where, "Where")
     if deleteBuilder.hasLimit() :
         printLimit(deleteBuilder.getLimit())
+
+def query(query: QueryObject) -> tuple :
+    queryParts = query.parts()
+    queryParams = query.params()
+    queryPair = ()
+    for i in range(len(queryParts)) :
+        param = None
+        if len(queryParams) > i : param = queryParams[i]
+        queryPair += ((queryParts[i], param),)
+    return queryPair
+
+def printQuery(queryObject: QueryObject) :
+    pairs = query(queryObject)
+    string = ""
+    for pair in pairs :
+        print("{}  ||  {}".format(pair[0], pair[1]))
