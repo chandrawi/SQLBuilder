@@ -4,7 +4,7 @@ import os, sys
 parentdir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 sys.path.append(parentdir)
 
-from SQLBuilder import QueryBuilder, QueryTranslator
+from pySQLBuilder import QueryBuilder, QueryTranslator
 
 builder = QueryBuilder() \
     .select({'data': 'data_table'}) \

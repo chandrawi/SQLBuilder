@@ -2,9 +2,9 @@ import os, sys
 parentdir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 sys.path.append(parentdir)
 
-from SQLBuilder.QueryObject import QueryObject
-from SQLBuilder.Builder import SelectBuilder, InsertBuilder, UpdateBuilder, DeleteBuilder
-from SQLBuilder.Builder import Table, Column, Value, Clause, Order, Limit
+from pySQLBuilder.QueryObject import QueryObject
+from pySQLBuilder.Builder import SelectBuilder, InsertBuilder, UpdateBuilder, DeleteBuilder
+from pySQLBuilder.Builder import Table, Column, Value, Clause, Order, Limit
 
 def table(table: Table) -> tuple :
     return (table.name(), table.alias())
