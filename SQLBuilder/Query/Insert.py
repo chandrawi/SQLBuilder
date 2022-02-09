@@ -26,10 +26,9 @@ class Insert(BaseQuery) :
         return self
 
     def multiValues(self, multiValues) :
-        if isinstance(multiValues, tuple) or isinstance(multiValues, list) :
-            for values in multiValues :
-                valueObject = self.man.createValue(values)
-                self.builder.addValue(valueObject)
+        valuesObjects = self.man.createMultiValue(multiValues)
+        for val in valuesObjects :
+            self.builder.addValue(val)
         return self
 
     def limit(self, limit, offset = None) :

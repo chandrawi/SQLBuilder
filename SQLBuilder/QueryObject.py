@@ -9,10 +9,10 @@ class QueryObject :
         self.__bindMarkAssoc = ':'
         self.__stringQuote = '\''
 
-    def parts(self) :
+    def parts(self) -> tuple :
         return self.__parts
 
-    def params(self) :
+    def params(self) -> tuple :
         return self.__params
 
     def add(self, queryPart, paramFlag: bool = False) :
@@ -27,13 +27,13 @@ class QueryObject :
             self.__params += (queryPart,)
             self.__paramSet = True
 
-    def bindMarkNum(self) :
+    def bindMarkNum(self) -> str :
         return self.__bindMarkNum
 
-    def bindMarkAssoc(self) :
+    def bindMarkAssoc(self) -> str :
         return self.__bindMarkAssoc
 
-    def stringQuote(self) :
+    def stringQuote(self) -> str :
         return self.__stringQuote
 
     def setMarkQuote(self, bindMarkNum: str, bindMarkAssoc: str, stringQuote: str) :

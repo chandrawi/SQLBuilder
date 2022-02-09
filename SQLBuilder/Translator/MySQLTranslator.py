@@ -17,20 +17,30 @@ class MySQLTranslator(BaseTranslator) :
 
     def translateSelect(self, query: QueryObject, builder: SelectBuilder) :
         self.firstKeyword(query, builder.builderType())
-        self.columnList(query, builder.getColumns(), builder.countColumns)
+        self.columnList(query, builder.getColumns(), builder.countColumns())
         self.fromTable(query, builder.getTable())
+        self.where(query, builder.getWhere(), builder.countWhere())
+        self.groupBy(query, builder.getGroup(), builder.countGroup())
+        self.having(query, builder.getHaving(), builder.countHaving())
+        self.orderBy(query, builder.getOrder(), builder.countOrder())
+        self.limitOffset(query, builder.getLimit(), builder.hasLimit())
 
     def translateInsert(self, query: QueryObject, builder: InsertBuilder) :
         self.firstKeyword(query, builder.builderType())
         self.intoTable(query, builder.getTable())
         self.columnListInsert(query, builder.getValues(), builder.countValues())
         self.valuesInsert(query, builder.getValues(), builder.countValues())
+        self.limitOffset(query, builder.getLimit(), builder.hasLimit())
 
     def translateUpdate(self, query: QueryObject, builder: UpdateBuilder) :
         self.firstKeyword(query, builder.builderType())
         self.tableSet(query, builder.getTable())
         self.valuesUpdate(query, builder.getValues(), builder.countValues())
+        self.where(query, builder.getWhere(), builder.countWhere())
+        self.limitOffset(query, builder.getLimit(), builder.hasLimit())
 
     def translateDelete(self, query: QueryObject, builder: DeleteBuilder) :
         self.firstKeyword(query, builder.builderType())
         self.fromTable(query, builder.getTable())
+        self.where(query, builder.getWhere(), builder.countWhere())
+        self.limitOffset(query, builder.getLimit(), builder.hasLimit())

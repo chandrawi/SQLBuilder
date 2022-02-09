@@ -94,9 +94,10 @@ class QueryTranslator :
     @staticmethod
     def getParams(query: QueryObject, bindingOption: int) :
         (bindingFlag, bindingMode) = QueryTranslator.getBindingOption(bindingOption)
-        array = {}
+        array = None
         if bindingFlag :
             if bindingMode :
+                array = {}
                 for i, param in enumerate(query.params()) :
                     array['v' + str(i)] = param
             else :
