@@ -1,6 +1,6 @@
 from ..QueryObject import QueryObject
 from ..Builder import BaseBuilder
-from ..Structure import Table, Column, Value, Clause, Order, Limit
+from ..Builder import Table, Column, Value, Clause, Order, Limit
 
 class BaseTranslator :
 
@@ -263,9 +263,9 @@ class BaseTranslator :
                 if isinstance(order, Order) :
                     self.column(query, order.column())
                     if (order.orderType() == Order.ORDER_ASC) :
-                        query.add(' ASC ')
+                        query.add(' ASC')
                     elif (order.orderType() == Order.ORDER_DESC) :
-                        query.add(' DESC ')
+                        query.add(' DESC')
                     count -= 1
                     if count > 0 : query.add(self.comma)
 

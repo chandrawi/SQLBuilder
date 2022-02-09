@@ -1,4 +1,4 @@
-from ..Structure import Table, Column, Value, Clause, Order, Limit
+from ..Builder import Table, Column, Value, Clause, Order, Limit
 from typing import Iterable, Mapping
 
 class Manipulation :
