@@ -17,7 +17,7 @@ class GenericTranslator(BaseTranslator) :
 
     def translateSelect(self, query: QueryObject, builder: SelectBuilder) :
         self.firstKeyword(query, builder.builderType())
-        self.columnList(query, builder.getColumns(), builder.countColumns())
+        self.columnsSelect(query, builder.getColumns(), builder.countColumns())
         self.fromTable(query, builder.getTable())
         self.where(query, builder.getWhere(), builder.countWhere())
         self.groupBy(query, builder.getGroup(), builder.countGroup())
@@ -28,7 +28,7 @@ class GenericTranslator(BaseTranslator) :
     def translateInsert(self, query: QueryObject, builder: InsertBuilder) :
         self.firstKeyword(query, builder.builderType())
         self.intoTable(query, builder.getTable())
-        self.columnListInsert(query, builder.getValues(), builder.countValues())
+        self.columnsInsert(query, builder.getValues(), builder.countValues())
         self.valuesInsert(query, builder.getValues(), builder.countValues())
         self.limitOffset(query, builder.getLimit(), builder.hasLimit())
 

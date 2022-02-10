@@ -14,12 +14,12 @@ class Manipulation :
             self.table = table
             name = table
             return Table(table)
-        elif isinstance(table, Mapping) :
-            if len(table) == 1 :
-                alias = tuple(table.keys())[0]
-                name = table[alias]
-                self.table = str(alias)
-        return Table(str(name), str(alias))
+        elif isinstance(table, Mapping) and len(table) == 1 :
+            key = next(iter(table.keys()))
+            name = str(table[key])
+            alias = str(key)
+            self.table = alias
+        return Table(name, alias)
 
     def createColumn(self, column) -> Column :
         table = ''
@@ -35,9 +35,8 @@ class Manipulation :
     def createColumns(self, columns) -> tuple :
         columnObjects = ()
         if isinstance(columns, Mapping) :
-            keys = tuple(columns.keys())
-            for i in range(len(keys)) :
-                columnObjects += (self.createColumn({keys[i]: columns[keys[i]]}),)
+            for key in columns.keys() :
+                columnObjects += (self.createColumn({key: columns[key]}),)
         elif isinstance(columns, Iterable) :
             for col in columns :
                 columnObjects += (self.createColumn(col),)
@@ -47,29 +46,34 @@ class Manipulation :
         function = ''
         pos1 = column.find('(')
         pos2 = column.rfind(')')
-        if pos1 > 0 and pos2 > 1 :
+        if pos1 > 0 and pos2 == len(column) - 1 :
             function = column[0:pos1]
             column = column[pos1+1:pos2]
         table = self.table
-        name = column
+        name = self.dequote(column)
         split = column.split('.')
-        if len(split) == 2 :
-            table = split[0]
-            name = split[1]
+        length = len(split)
+        if length == 2 :
+            table = self.dequote(split[0])
+            name = self.dequote(split[1])
+        elif length > 2 :
+            pos = column.find('"."')
+            if pos <= 0 : pos = column.find("'.'")
+            if pos <= 0 : pos = column.find('`.`')
+            if pos > 0 :
+                table = column[1:pos]
+                name = column[pos+3:-1]
         return (table, name, function)
 
     def parseColumnMap(self, column: Mapping) -> tuple :
-        alias = ''
-        keys = tuple(column.keys())
         if len(column) == 1 :
-            alias = str(keys[0])
-            column = column[keys[0]]
-        table = self.table
-        name = ''
-        function = ''
-        if isinstance(column, str) :
-            (table, name, function) = self.parseColumnStr(column)
-        return (table, name, function, alias)
+            key = next(iter(column.keys()))
+            alias = str(key)
+            columnStr = str(column[key])
+            (table, name, function) = self.parseColumnStr(columnStr)
+            return (table, name, function, alias)
+        else :
+            return ('', '', '', '')
 
     def createValue(self, inputValue) -> Value :
         columns = ()
@@ -94,16 +98,19 @@ class Manipulation :
         columns = ()
         values = ()
         for pair in pairs :
-            if isinstance(pair, Mapping) :
-                if len(pair) :
-                    key = tuple(pair.keys())[0]
-                    columns += (key,)
-                    values += (pair[key],)
-            elif isinstance(pair, Iterable) :
-                if len(pair) == 2 :
-                    columns += (pair[0],)
-                    values += (pair[1],)
+            if isinstance(pair, Mapping) and len(pair) :
+                key = next(iter(pair.keys()))
+                columns += (key,)
+                values += (pair[key],)
+            elif isinstance(pair, Iterable) and len(pair) == 2 :
+                columns += (pair[0],)
+                values += (pair[1],)
         return (columns, values)
+
+    def dequote(self, input: str) -> str :
+        if (input[0] == input[-1]) and input.startswith(('"', "'", '`')) :
+            return input[1:-1]
+        return input
 
 ### WHERE AND HAVING CLAUSE QUERY ###
 
@@ -242,7 +249,6 @@ class Manipulation :
         orderObjects = ()
         for col in columnObjects :
             orderObjects += (Order(col, validType),)
-        print(orderObjects)
         return orderObjects
 
     def getOrderType(self, orderType) -> int :

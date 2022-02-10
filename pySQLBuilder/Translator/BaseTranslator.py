@@ -45,7 +45,7 @@ class BaseTranslator :
         query.add(name)
         query.add(self.quote_struct)
 
-    def columnList(self, query: QueryObject, columns: tuple, count: int) :
+    def columnsSelect(self, query: QueryObject, columns: tuple, count: int) :
         if count == 0 :
             query.add('*')
             return
@@ -66,7 +66,7 @@ class BaseTranslator :
                 count -= 1
                 if count > 0 : query.add(self.comma)
 
-    def columnListInsert(self, query: QueryObject, values: tuple, count: int) :
+    def columnsInsert(self, query: QueryObject, values: tuple, count: int) :
         if count == 0 :
             query.add(' ' + self.open_bracket)
             query.add(self.close_bracket)
