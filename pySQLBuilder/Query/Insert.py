@@ -4,13 +4,12 @@ from ..Builder import BaseBuilder, InsertBuilder
 
 class Insert(BaseQuery) :
 
-    man = Manipulation()
-
     def __init__(self, options: tuple = (), statement = None) :
         self.builder = InsertBuilder()
         self.builder.builderType(BaseBuilder.INSERT)
         self.options = options
         self.statement = statement
+        self.man = Manipulation()
 
     def insert(self, table) :
         if table :

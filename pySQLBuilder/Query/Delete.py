@@ -4,13 +4,12 @@ from ..Builder import BaseBuilder, DeleteBuilder
 
 class Delete(BaseQuery) :
 
-    man = Manipulation()
-
     def __init__(self, options: tuple = (), statement = None) :
         self.builder = DeleteBuilder()
         self.builder.builderType(BaseBuilder.DELETE)
         self.options = options
         self.statement = statement
+        self.man = Manipulation()
 
     def delete(self, table) :
         if table :

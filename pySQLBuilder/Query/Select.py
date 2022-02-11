@@ -4,13 +4,12 @@ from ..Builder import BaseBuilder, SelectBuilder
 
 class Select(BaseQuery) :
 
-    man = Manipulation()
-
     def __init__(self, options: tuple = (), statement = None) :
         self.builder = SelectBuilder()
         self.builder.builderType(BaseBuilder.SELECT)
         self.options = options
         self.statement = statement
+        self.man = Manipulation()
 
     def select(self, table) :
         if table :

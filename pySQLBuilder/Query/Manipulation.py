@@ -3,9 +3,13 @@ from typing import Iterable, Mapping
 
 class Manipulation :
 
-### TABLE, COLUMN, VALUES QUERY ###
+    def __init__(self) :
+        self.table = ''
+        self.clauseType = self.CLAUSE_DEFAULT
+        self.nestedConjunctive = Clause.CONJUNCTIVE_NONE
+        self.nestedLevel = 0
 
-    table = ''
+### TABLE, COLUMN, VALUES QUERY ###
 
     def createTable(self, table) -> Table :
         name = ''
@@ -117,10 +121,6 @@ class Manipulation :
     CLAUSE_DEFAULT = 0
     CLAUSE_WHERE = 1
     CLAUSE_HAVING = 2
-
-    clauseType = CLAUSE_DEFAULT
-    nestedConjunctive = Clause.CONJUNCTIVE_NONE
-    nestedLevel = 0
 
     def createClause(self, clauseType: int, column, operator, values, conjunctive: int) -> Clause :
         columnObject = self.createColumn(column)
