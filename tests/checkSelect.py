@@ -4,9 +4,9 @@ import os, sys
 parentdir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 sys.path.append(parentdir)
 
-from pySQLBuilder import QueryBuilder, QueryTranslator
+import pySQLBuilder
 
-builder = QueryBuilder() \
+builder = pySQLBuilder \
     .select({'data': 'data_table'}) \
     .column('UNIX_TIMESTAMP(ts)') \
     .columns({'alias1': 'col1', 'alias2': 'col2'}) \

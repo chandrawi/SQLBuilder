@@ -4,11 +4,12 @@ from ..Builder import BaseBuilder, UpdateBuilder
 
 class Update(BaseQuery) :
 
-    def __init__(self, options: tuple = (), statement = None) :
+    def __init__(self, translator: int, bindingOption: int) :
+        BaseQuery.__init__(self)
         self.builder = UpdateBuilder()
         self.builder.builderType(BaseBuilder.UPDATE)
-        self.options = options
-        self.statement = statement
+        self.translator = translator
+        self.bindingOption = bindingOption
         self.man = Manipulation()
 
     def update(self, table) :
