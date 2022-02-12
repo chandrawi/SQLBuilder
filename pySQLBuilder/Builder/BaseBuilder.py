@@ -1,4 +1,4 @@
-from .Structure import Table, Column, Value
+from ..Structure import Table, Column, Value
 
 class BaseBuilder :
 

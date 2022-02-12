@@ -1,4 +1,4 @@
-from ..Builder import Table, Column, Value, Clause, Order, Limit
+from ..Structure import Table, Column, Value, Clause, Order, Limit
 from typing import Iterable, Mapping
 
 class Manipulation :
@@ -125,7 +125,7 @@ class Manipulation :
     def createClause(self, clauseType: int, column, operator, values, conjunctive: int) -> Clause :
         columnObject = self.createColumn(column)
         validOperator = self.getOperator(operator)
-        validValues = self.getValues(values, operator)
+        validValues = self.getValues(values, validOperator)
         conjunctive = self.getConjunctive(clauseType, conjunctive)
         nestedLevel = self.nestedLevel
         self.clauseType = clauseType
@@ -167,8 +167,8 @@ class Manipulation :
             else :
                 validOperator = Clause.OPERATOR_DEFAULT
         return validOperator
-            
-    def getValues(self, values, operator) :
+
+    def getValues(self, values, operator: int) :
         valid = True
         if operator == Clause.OPERATOR_BETWEEN or operator == Clause.OPERATOR_NOT_BETWEEN :
             if isinstance(values, Iterable) :
@@ -212,11 +212,11 @@ class Manipulation :
 
     def endClause(self, clauseType: int, builder) :
         if clauseType == self.CLAUSE_WHERE :
-            lastNested = builder.lastWhere().nestedLevel()
-            builder.editWhereNested(lastNested + 1)
+            lastLevel = builder.lastWhere().level()
+            builder.editWhereLevel(lastLevel + 1)
         elif clauseType == self.CLAUSE_HAVING :
-            lastNested = builder.lastHaving().nestedLevel()
-            builder.editHavingNested(lastNested + 1)
+            lastLevel = builder.lastHaving().level()
+            builder.editHavingLevel(lastLevel + 1)
 
     def andClause(self, clauseType: int, column, operator: str, value = None) -> Clause :
         return self.createClause(clauseType, column, operator, value, Clause.CONJUNCTIVE_AND)

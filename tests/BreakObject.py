@@ -4,7 +4,7 @@ sys.path.append(parentdir)
 
 from pySQLBuilder.QueryObject import QueryObject
 from pySQLBuilder.Builder import SelectBuilder, InsertBuilder, UpdateBuilder, DeleteBuilder
-from pySQLBuilder.Builder import Table, Column, Value, Clause, Order, Limit
+from pySQLBuilder.Structure import Table, Column, Value, Clause, Order, Limit
 
 def table(table: Table) -> tuple :
     return (table.name(), table.alias())
@@ -20,7 +20,7 @@ def value(value: Value) -> tuple :
 
 def clause(clause: Clause) -> tuple :
     col = column(clause.column())
-    return (col, clause.operator(), clause.value(), clause.conjunctive(), clause.nestedLevel())
+    return (col, clause.operator(), clause.value(), clause.conjunctive(), clause.level())
 
 def order(order: Order) -> tuple :
     col = column(order.column())

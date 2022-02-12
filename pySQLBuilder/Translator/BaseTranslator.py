@@ -1,6 +1,6 @@
 from ..QueryObject import QueryObject
 from ..Builder import BaseBuilder
-from ..Builder import Table, Column, Value, Clause, Order, Limit
+from ..Structure import Table, Column, Value, Clause, Order, Limit
 
 class BaseTranslator :
 
@@ -197,7 +197,7 @@ class BaseTranslator :
             for where in whereClauses :
                 if isinstance(where, Clause) :
                     conjunctive = self.conjunctive(where.conjunctive())
-                    nestedLevel = where.nestedLevel()
+                    nestedLevel = where.level()
                     query.add(conjunctive)
                     if nestedLevel < 0 : query.add(self.brackets(nestedLevel))
                     self.clause(query, where)
@@ -209,7 +209,7 @@ class BaseTranslator :
             for having in havingClauses :
                 if isinstance(having, Clause) :
                     conjunctive = self.conjunctive(having.conjunctive())
-                    nestedLevel = having.nestedLevel()
+                    nestedLevel = having.level()
                     query.add(conjunctive)
                     if nestedLevel < 0 : query.add(self.brackets(nestedLevel))
                     self.clause(query, having)

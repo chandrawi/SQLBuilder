@@ -1,4 +1,3 @@
-from .Structure import Table, Column, Value, Clause, Order, Limit
 from .BaseBuilder import BaseBuilder
 from .SelectBuilder import SelectBuilder
 from .InsertBuilder import InsertBuilder

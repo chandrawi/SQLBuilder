@@ -1,5 +1,5 @@
 from .BaseBuilder import BaseBuilder
-from .Structure import Column, Clause, Order, Limit
+from ..Structure import Column, Clause, Order, Limit
 
 class SelectBuilder(BaseBuilder) :
 
@@ -26,10 +26,10 @@ class SelectBuilder(BaseBuilder) :
     def addWhere(self, where: Clause) :
         self.__where += (where,)
 
-    def editWhereNested(self, nestedLevel: int) :
+    def editWhereLevel(self, nestedLevel: int) :
         count = len(self.__where)
         if count > 0 :
-            self.__where[count-1].nestedLevel(nestedLevel)
+            self.__where[count-1].level(nestedLevel)
 
     def getHaving(self) -> tuple :
         return self.__having
@@ -46,10 +46,10 @@ class SelectBuilder(BaseBuilder) :
     def addHaving(self, having: Clause) :
         self.__having += (having,)
 
-    def editHavingNested(self, nestedLevel: int) :
+    def editHavingLevel(self, nestedLevel: int) :
         count = len(self.__having)
         if count > 0 :
-            self.__having[count-1].nestedLevel(nestedLevel)
+            self.__having[count-1].level(nestedLevel)
 
     def getGroup(self) -> tuple :
         return self.__groupBy

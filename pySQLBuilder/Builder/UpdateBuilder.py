@@ -1,5 +1,5 @@
 from .BaseBuilder import BaseBuilder
-from .Structure import Clause, Limit
+from ..Structure import Clause, Limit
 
 class UpdateBuilder(BaseBuilder) :
 

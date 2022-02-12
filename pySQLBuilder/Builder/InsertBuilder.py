@@ -1,5 +1,5 @@
 from .BaseBuilder import BaseBuilder
-from .Structure import Limit
+from ..Structure import Limit
 
 class InsertBuilder(BaseBuilder) :
 
