@@ -1,6 +1,7 @@
 from .BaseQuery import BaseQuery
 from .Manipulation import Manipulation
 from ..Builder import BaseBuilder, InsertBuilder
+from ..Structure import Table, Value
 
 class Insert(BaseQuery) :
 
@@ -14,19 +15,19 @@ class Insert(BaseQuery) :
 
     def insert(self, table) :
         if table :
-            tableObject = self.man.createTable(table)
+            tableObject = Table.create(table)
             self.builder.setTable(tableObject)
         else :
             raise Exception("Table name is not defined")
         return self
 
     def values(self, values) :
-        valueObject = self.man.createValue(values)
+        valueObject = Value.create(values)
         self.builder.addValue(valueObject)
         return self
 
     def multiValues(self, multiValues) :
-        valuesObjects = self.man.createMultiValue(multiValues)
+        valuesObjects = Value.createMulti(multiValues)
         for val in valuesObjects :
             self.builder.addValue(val)
         return self

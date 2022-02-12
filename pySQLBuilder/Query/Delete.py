@@ -1,6 +1,7 @@
 from .BaseQuery import BaseQuery
 from .Manipulation import Manipulation
 from ..Builder import BaseBuilder, DeleteBuilder
+from ..Structure import Table
 
 class Delete(BaseQuery) :
 
@@ -14,7 +15,7 @@ class Delete(BaseQuery) :
 
     def delete(self, table) :
         if table :
-            tableObject = self.man.createTable(table)
+            tableObject = Table.create(table)
             self.builder.setTable(tableObject)
         else :
             raise Exception("Table name is not defined")

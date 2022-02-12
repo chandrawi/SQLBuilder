@@ -1,6 +1,7 @@
 from .BaseQuery import BaseQuery
 from .Manipulation import Manipulation
 from ..Builder import BaseBuilder, SelectBuilder
+from ..Structure import Table, Column
 
 class Select(BaseQuery) :
 
@@ -14,19 +15,19 @@ class Select(BaseQuery) :
 
     def select(self, table) :
         if table :
-            tableObject = self.man.createTable(table)
+            tableObject = Table.create(table)
             self.builder.setTable(tableObject)
         else :
             raise Exception("Table name is not defined")
         return self
 
     def column(self, column) :
-        columnObject = self.man.createColumn(column)
+        columnObject = Column.create(column)
         self.builder.addColumn(columnObject)
         return self
 
     def columns(self, columns) :
-        columnObjects = self.man.createColumns(columns)
+        columnObjects = Column.createMulti(columns)
         for col in columnObjects :
             self.builder.addColumn(col)
         return self

@@ -11,3 +11,13 @@ class Limit :
 
     def offset(self) -> int :
         return self.__offset
+
+    @classmethod
+    def create(cls, limit, offset) :
+        validLimit = Limit.NOT_SET
+        validOffset = Limit.NOT_SET
+        if isinstance(limit, int) :
+            if limit > 0 : validLimit = limit
+        if isinstance(offset, int) :
+            if offset > 0 : validOffset = offset
+        return Limit(validLimit, validOffset)

@@ -1,6 +1,7 @@
 from .BaseQuery import BaseQuery
 from .Manipulation import Manipulation
 from ..Builder import BaseBuilder, UpdateBuilder
+from ..Structure import Table, Value
 
 class Update(BaseQuery) :
 
@@ -14,14 +15,14 @@ class Update(BaseQuery) :
 
     def update(self, table) :
         if table :
-            tableObject = self.man.createTable(table)
+            tableObject = Table.create(table)
             self.builder.setTable(tableObject)
         else :
             raise Exception("Table name is not defined")
         return self
 
     def values(self, values) :
-        valueObject = self.man.createValue(values)
+        valueObject = Value.create(values)
         self.builder.addValue(valueObject)
         return self
 
