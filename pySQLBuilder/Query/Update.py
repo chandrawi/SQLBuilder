@@ -23,7 +23,7 @@ class Update(BaseQuery, Clauses, Where, LimitOffset) :
             raise Exception("Table name is not defined")
         return self
 
-    def values(self, values) :
+    def set(self, values) :
         valueObject = Value.create(values)
         self.builder.addValue(valueObject)
         return self

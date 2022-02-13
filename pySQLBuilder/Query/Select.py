@@ -2,6 +2,7 @@ from .BaseQuery import BaseQuery
 from .Component import Clauses, Where, Having, GroupBy, OrderBy, LimitOffset
 from ..Builder import BaseBuilder, SelectBuilder
 from ..Structure import Table, Column
+from typing import Iterable, Mapping
 
 class Select(BaseQuery, Clauses, Where, Having, GroupBy, OrderBy, LimitOffset) :
 
@@ -32,7 +33,15 @@ class Select(BaseQuery, Clauses, Where, Having, GroupBy, OrderBy, LimitOffset) :
         return self
 
     def columns(self, columns) :
-        columnObjects = Column.createMulti(columns)
+        columnObjects = ()
+        if isinstance(columns, str) :
+            columnObjects += (Column.create(columns),)
+        elif isinstance(columns, Mapping) :
+            for key in columns.keys() :
+                columnObjects += (Column.create({key: columns[key]}),)
+        elif isinstance(columns, Iterable) :
+            for col in columns :
+                columnObjects += (Column.create(col),)
         for col in columnObjects :
             self.builder.addColumn(col)
         return self

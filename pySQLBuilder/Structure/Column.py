@@ -1,5 +1,5 @@
 from .Table import Table
-from typing import Iterable, Mapping
+from typing import Mapping
 
 class Column :
 
@@ -32,17 +32,6 @@ class Column :
         elif isinstance(column, Mapping) :
             (table, name, function, alias) = cls.parseMap(column)
         return Column(table, name, function, alias)
-
-    @classmethod
-    def createMulti(cls, columns) :
-        columnObjects = ()
-        if isinstance(columns, Mapping) :
-            for key in columns.keys() :
-                columnObjects += (cls.create({key: columns[key]}),)
-        elif isinstance(columns, Iterable) :
-            for col in columns :
-                columnObjects += (cls.create(col),)
-        return columnObjects
 
     @classmethod
     def parseStr(cls, column: str) -> tuple :

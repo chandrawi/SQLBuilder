@@ -5,20 +5,24 @@ from typing import Iterable, Mapping
 class OrderBy :
 
     def oderBy(self, columns, orderType) :
-        if (isinstance(columns, Mapping) and len(columns) == 1) or isinstance(columns, str) :
-            orderObject = Order.create(columns, orderType)
-            self.builder.addOrder(orderObject)
+        orderObjects = ()
+        if isinstance(columns, str) :
+            orderObjects += (Order.create(columns, orderType),)
+        elif isinstance(columns, Mapping) :
+            for key in columns.keys() :
+                orderObjects += (Order.create({key: columns[key]}, orderType),)
         elif isinstance(columns, Iterable) :
-            for column in columns :
-                orderObject = Order.create(column, orderType)
-                if isinstance(self.builder, OrderByBuilder) :
-                    self.builder.addOrder(orderObject)
-                else :
-                    raise Exception('Builder object does not support ORDER BY query')
+            for col in columns :
+                orderObjects += (Order.create(col, orderType),)
+        for order in orderObjects :
+            if isinstance(self.builder, OrderByBuilder) :
+                self.builder.addOrder(order)
+            else :
+                raise Exception('Builder object does not support ORDER BY query')
         return self
 
-    def orderByAsc(self, column) -> Order :
+    def orderByAsc(self, column) :
         return self.oderBy(column, Order.ORDER_ASC)
 
-    def orderByDesc(self, column) -> Order :
+    def orderByDesc(self, column) :
         return self.oderBy(column, Order.ORDER_DESC)

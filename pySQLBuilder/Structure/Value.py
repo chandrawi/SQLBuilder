@@ -34,14 +34,6 @@ class Value :
         return Value(cls.table, columns, values)
 
     @classmethod
-    def createMulti(cls, multiValues) -> tuple :
-        valuesObjects = ()
-        if isinstance(multiValues, Iterable) :
-            for val in multiValues :
-                valuesObjects += (cls.create(val),)
-        return valuesObjects
-
-    @classmethod
     def parsePair(cls, pairs: Iterable) -> tuple :
         if isinstance(pairs[0], str) and len(pairs) == 2 :
             return ((pairs[0],), (pairs[1],))

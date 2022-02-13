@@ -2,6 +2,7 @@ from .BaseQuery import BaseQuery
 from .Component import LimitOffset
 from ..Builder import BaseBuilder, InsertBuilder
 from ..Structure import Table, Value
+from typing import Iterable
 
 class Insert(BaseQuery, LimitOffset) :
 
@@ -27,7 +28,10 @@ class Insert(BaseQuery, LimitOffset) :
         return self
 
     def multiValues(self, multiValues) :
-        valuesObjects = Value.createMulti(multiValues)
+        valuesObjects = ()
+        if isinstance(multiValues, Iterable) :
+            for val in multiValues :
+                valuesObjects += (Value.create(val),)
         for val in valuesObjects :
             self.builder.addValue(val)
         return self
