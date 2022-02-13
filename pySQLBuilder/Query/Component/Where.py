@@ -1,4 +1,5 @@
 from ...Structure import Clause
+from ...Builder import WhereBuilder
 
 class Where :
 
@@ -34,7 +35,10 @@ class Where :
 
     def __where(self, column, operator, value, conjunctive: int) :
         clauseObject = Clause.create(Clause.WHERE, column, operator, value, conjunctive)
-        self.builder.addWhere(clauseObject)
+        if isinstance(self.builder, WhereBuilder) :
+            self.builder.addWhere(clauseObject)
+        else :
+            raise Exception('Builder object does not support WHERE query')
         return self
 
     def where(self, column, operator, value = None) :

@@ -1,4 +1,5 @@
 from ...Structure import Limit
+from ...Builder import LimitBuilder
 
 class LimitOffset :
 
@@ -10,7 +11,10 @@ class LimitOffset :
         if isinstance(offset, int) :
             if offset > 0: validOffset = offset
         limitObject = Limit(validLimit, validOffset)
-        self.builder.setLimit(limitObject)
+        if isinstance(self.builder, LimitBuilder) :
+            self.builder.setLimit(limitObject)
+        else :
+            raise Exception('Builder object does not support LIMIT and OFFSET query')
         return self
 
     def offset(self, offset) :

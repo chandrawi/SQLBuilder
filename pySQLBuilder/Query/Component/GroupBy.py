@@ -1,4 +1,5 @@
 from ...Structure import Column
+from ...Builder import GroupByBuilder
 from typing import Mapping
 
 class GroupBy :
@@ -9,5 +10,8 @@ class GroupBy :
         else :
             columnObjects = Column.createMulti(columns)
         for column in columnObjects :
-            self.builder.addGroup(column)
+            if isinstance(self.builder, GroupByBuilder) :
+                self.builder.addGroup(column)
+            else :
+                raise Exception('Builder object does not support GROUP BY query')
         return self

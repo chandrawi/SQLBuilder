@@ -1,4 +1,5 @@
 from ...Structure import Clause
+from ...Builder import HavingBuilder
 
 class Having :
 
@@ -34,7 +35,10 @@ class Having :
 
     def __having(self, column, operator, value, conjunctive: int) :
         clauseObject = Clause.create(Clause.HAVING, column, operator, value, conjunctive)
-        self.builder.addHaving(clauseObject)
+        if isinstance(self.builder, HavingBuilder) :
+            self.builder.addHaving(clauseObject)
+        else :
+            raise Exception('Builder object does not support HAVING query')
         return self
 
     def having(self, column, operator: str, value = None) :

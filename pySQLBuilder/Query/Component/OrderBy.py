@@ -1,4 +1,5 @@
 from ...Structure import Order
+from ...Builder import OrderByBuilder
 from typing import Iterable, Mapping
 
 class OrderBy :
@@ -10,7 +11,10 @@ class OrderBy :
         elif isinstance(columns, Iterable) :
             for column in columns :
                 orderObject = Order.create(column, orderType)
-                self.builder.addOrder(orderObject)
+                if isinstance(self.builder, OrderByBuilder) :
+                    self.builder.addOrder(orderObject)
+                else :
+                    raise Exception('Builder object does not support ORDER BY query')
         return self
 
     def orderByAsc(self, column) -> Order :
