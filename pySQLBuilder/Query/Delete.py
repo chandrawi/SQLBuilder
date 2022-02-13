@@ -1,9 +1,9 @@
 from .BaseQuery import BaseQuery
-from .Manipulation import Manipulation
+from .Component import Clauses, Where, LimitOffset
 from ..Builder import BaseBuilder, DeleteBuilder
 from ..Structure import Table
 
-class Delete(BaseQuery) :
+class Delete(BaseQuery, Clauses, Where, LimitOffset) :
 
     def __init__(self, translator: int, bindingOption: int) :
         BaseQuery.__init__(self)
@@ -11,7 +11,9 @@ class Delete(BaseQuery) :
         self.builder.builderType(BaseBuilder.DELETE)
         self.translator = translator
         self.bindingOption = bindingOption
-        self.man = Manipulation()
+        Clauses.__init__(self)
+        Where.__init__(self)
+        LimitOffset.__init__(self)
 
     def delete(self, table) :
         if table :
@@ -19,63 +21,4 @@ class Delete(BaseQuery) :
             self.builder.setTable(tableObject)
         else :
             raise Exception("Table name is not defined")
-        return self
-
-    def beginWhere(self) :
-        self.man.beginClause()
-        return self
-
-    def beginAndWhere(self) :
-        self.man.beginAndClause()
-        return self
-
-    def beginOrWhere(self) :
-        self.man.beginOrClause()
-        return self
-
-    def beginNotAndWhere(self) :
-        self.man.beginNotAndClause()
-        return self
-
-    def beginNotOrWhere(self) :
-        self.man.beginNotOrClause()
-        return self
-
-    def endWhere(self) :
-        self.man.endClause(self.man.CLAUSE_WHERE, self.builder)
-        return self
-
-    def where(self, column, operator: str, value = None) :
-        clauseObject = self.man.andClause(self.man.CLAUSE_WHERE, column, operator, value)
-        self.builder.addWhere(clauseObject)
-        return self
-
-    def andWhere(self, column, operator: str, value = None) :
-        clauseObject = self.man.andClause(self.man.CLAUSE_WHERE, column, operator, value)
-        self.builder.addWhere(clauseObject)
-        return self
-
-    def orWhere(self, column, operator: str, value = None) :
-        clauseObject = self.man.orClause(self.man.CLAUSE_WHERE, column, operator, value)
-        self.builder.addWhere(clauseObject)
-        return self
-
-    def notAndWhere(self, column, operator: str, value = None) :
-        clauseObject = self.man.notAndClause(self.man.CLAUSE_WHERE, column, operator, value)
-        self.builder.addWhere(clauseObject)
-        return self
-
-    def notOrWhere(self, column, operator: str, value = None) :
-        clauseObject = self.man.notOrClause(self.man.CLAUSE_WHERE, column, operator, value)
-        self.builder.addWhere(clauseObject)
-        return self
-
-    def limit(self, limit, offset = None) :
-        limitObject = self.man.createLimit(limit, offset)
-        self.builder.setLimit(limitObject)
-        return self
-
-    def offset(self, offset) :
-        limitObject = self.man.offset(offset)
-        self.builder.setLimit(limitObject)
         return self

@@ -3,8 +3,9 @@ from .Column import Column
 
 class Clause :
 
-    CLAUSE_WHERE = 1
-    CLAUSE_HAVING = 2
+    NONE = 0
+    WHERE = 1
+    HAVING = 2
 
     OPERATOR_DEFAULT = 0
     OPERATOR_EQUAL = 1

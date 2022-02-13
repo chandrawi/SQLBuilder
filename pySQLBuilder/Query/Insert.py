@@ -1,9 +1,9 @@
 from .BaseQuery import BaseQuery
-from .Manipulation import Manipulation
+from .Component import LimitOffset
 from ..Builder import BaseBuilder, InsertBuilder
 from ..Structure import Table, Value
 
-class Insert(BaseQuery) :
+class Insert(BaseQuery, LimitOffset) :
 
     def __init__(self, translator: int, bindingOption: int) :
         BaseQuery.__init__(self)
@@ -11,7 +11,7 @@ class Insert(BaseQuery) :
         self.builder.builderType(BaseBuilder.INSERT)
         self.translator = translator
         self.bindingOption = bindingOption
-        self.man = Manipulation()
+        LimitOffset.__init__(self)
 
     def insert(self, table) :
         if table :
@@ -30,14 +30,4 @@ class Insert(BaseQuery) :
         valuesObjects = Value.createMulti(multiValues)
         for val in valuesObjects :
             self.builder.addValue(val)
-        return self
-
-    def limit(self, limit, offset = None) :
-        limitObject = self.man.createLimit(limit, offset)
-        self.builder.setLimit(limitObject)
-        return self
-
-    def offset(self, offset) :
-        limitObject = self.man.offset(offset)
-        self.builder.setLimit(limitObject)
         return self

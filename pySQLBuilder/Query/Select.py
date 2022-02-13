@@ -1,9 +1,9 @@
 from .BaseQuery import BaseQuery
-from .Manipulation import Manipulation
+from .Component import Clauses, Where, Having, GroupBy, OrderBy, LimitOffset
 from ..Builder import BaseBuilder, SelectBuilder
 from ..Structure import Table, Column
 
-class Select(BaseQuery) :
+class Select(BaseQuery, Clauses, Where, Having, GroupBy, OrderBy, LimitOffset) :
 
     def __init__(self, translator: int, bindingOption: int) :
         BaseQuery.__init__(self)
@@ -11,7 +11,12 @@ class Select(BaseQuery) :
         self.builder.builderType(BaseBuilder.SELECT)
         self.translator = translator
         self.bindingOption = bindingOption
-        self.man = Manipulation()
+        Clauses.__init__(self)
+        Where.__init__(self)
+        Having.__init__(self)
+        GroupBy.__init__(self)
+        OrderBy.__init__(self)
+        LimitOffset.__init__(self)
 
     def select(self, table) :
         if table :
@@ -30,136 +35,4 @@ class Select(BaseQuery) :
         columnObjects = Column.createMulti(columns)
         for col in columnObjects :
             self.builder.addColumn(col)
-        return self
-
-    def beginWhere(self) :
-        self.man.beginClause()
-        return self
-
-    def beginAndWhere(self) :
-        self.man.beginAndClause()
-        return self
-
-    def beginOrWhere(self) :
-        self.man.beginOrClause()
-        return self
-
-    def beginNotAndWhere(self) :
-        self.man.beginNotAndClause()
-        return self
-
-    def beginNotOrWhere(self) :
-        self.man.beginNotOrClause()
-        return self
-
-    def endWhere(self) :
-        self.man.endClause(self.man.CLAUSE_WHERE, self.builder)
-        return self
-
-    def where(self, column, operator: str, value = None) :
-        clauseObject = self.man.andClause(self.man.CLAUSE_WHERE, column, operator, value)
-        self.builder.addWhere(clauseObject)
-        return self
-
-    def andWhere(self, column, operator: str, value = None) :
-        clauseObject = self.man.andClause(self.man.CLAUSE_WHERE, column, operator, value)
-        self.builder.addWhere(clauseObject)
-        return self
-
-    def orWhere(self, column, operator: str, value = None) :
-        clauseObject = self.man.orClause(self.man.CLAUSE_WHERE, column, operator, value)
-        self.builder.addWhere(clauseObject)
-        return self
-
-    def notAndWhere(self, column, operator: str, value = None) :
-        clauseObject = self.man.notAndClause(self.man.CLAUSE_WHERE, column, operator, value)
-        self.builder.addWhere(clauseObject)
-        return self
-
-    def notOrWhere(self, column, operator: str, value = None) :
-        clauseObject = self.man.notOrClause(self.man.CLAUSE_WHERE, column, operator, value)
-        self.builder.addWhere(clauseObject)
-        return self
-
-    def beginHaving(self) :
-        self.man.beginClause()
-        return self
-
-    def beginAndHaving(self) :
-        self.man.beginAndClause()
-        return self
-
-    def beginOrHaving(self) :
-        self.man.beginOrClause()
-        return self
-
-    def beginNotAndHaving(self) :
-        self.man.beginNotAndClause()
-        return self
-
-    def beginNotOrHaving(self) :
-        self.man.beginNotOrClause()
-        return self
-
-    def endHaving(self) :
-        self.man.endClause(self.man.CLAUSE_HAVING, self.builder)
-        return self
-
-    def having(self, column, operator: str, value = None) :
-        clauseObject = self.man.andClause(self.man.CLAUSE_HAVING, column, operator, value)
-        self.builder.addHaving(clauseObject)
-        return self
-
-    def andHaving(self, column, operator: str, value = None) :
-        clauseObject = self.man.andClause(self.man.CLAUSE_HAVING, column, operator, value)
-        self.builder.addHaving(clauseObject)
-        return self
-
-    def orHaving(self, column, operator: str, value = None) :
-        clauseObject = self.man.orClause(self.man.CLAUSE_HAVING, column, operator, value)
-        self.builder.addHaving(clauseObject)
-        return self
-
-    def notAndHaving(self, column, operator: str, value = None) :
-        clauseObject = self.man.notAndClause(self.man.CLAUSE_HAVING, column, operator, value)
-        self.builder.addHaving(clauseObject)
-        return self
-
-    def notOrHaving(self, column, operator: str, value = None) :
-        clauseObject = self.man.notOrClause(self.man.CLAUSE_HAVING, column, operator, value)
-        self.builder.addHaving(clauseObject)
-        return self
-
-    def groupBy(self, columns) :
-        columnObjects = self.man.createGroups(columns)
-        for col in columnObjects :
-            self.builder.addGroup(col)
-        return self
-
-    def orderBy(self, columns, orderType) :
-        orderObjects = self.man.createOrders(columns, orderType)
-        for order in orderObjects :
-            self.builder.addOrder(order)
-        return self
-
-    def orderByAsc(self, column) :
-        orderObjects = self.man.orderAsc(column)
-        for order in orderObjects :
-            self.builder.addOrder(order)
-        return self
-
-    def orderByDesc(self, column) :
-        orderObjects = self.man.orderDesc(column)
-        for order in orderObjects :
-            self.builder.addOrder(order)
-        return self
-
-    def limit(self, limit, offset = None) :
-        limitObject = self.man.createLimit(limit, offset)
-        self.builder.setLimit(limitObject)
-        return self
-
-    def offset(self, offset) :
-        limitObject = self.man.offset(offset)
-        self.builder.setLimit(limitObject)
         return self

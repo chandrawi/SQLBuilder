@@ -1,3 +1,4 @@
+from .Table import Table
 from typing import Iterable, Mapping
 
 class Column :
@@ -51,7 +52,7 @@ class Column :
         if pos1 > 0 and pos2 == len(column) - 1 :
             function = column[0:pos1]
             column = column[pos1+1:pos2]
-        table = cls.table
+        table = Table.table
         name = cls.dequote(column)
         split = column.split('.')
         length = len(split)
