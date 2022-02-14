@@ -29,10 +29,11 @@ class Having :
         return self
 
     def endHaving(self) :
-        lastClause = self.builder.lastHaving()
-        if isinstance(lastClause, Clause) :
-            lastLevel = lastClause.level()
-            lastClause.level(lastLevel + 1)
+        if isinstance(self.builder, HavingBuilder) :
+            lastClause = self.builder.lastHaving()
+            if lastClause is not None :
+                lastLevel = lastClause.level()
+                lastClause.level(lastLevel + 1)
         return self
 
     def __having(self, column, operator, value, conjunctive: int) :

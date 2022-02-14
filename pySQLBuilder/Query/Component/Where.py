@@ -29,10 +29,11 @@ class Where :
         return self
 
     def endWhere(self) :
-        lastClause = self.builder.lastWhere()
-        if isinstance(lastClause, Clause) :
-            lastLevel = lastClause.level()
-            lastClause.level(lastLevel + 1)
+        if isinstance(self.builder, WhereBuilder) :
+            lastClause = self.builder.lastWhere()
+            if lastClause is not None :
+                lastLevel = lastClause.level()
+                lastClause.level(lastLevel + 1)
         return self
 
     def __where(self, column, operator, value, conjunctive: int) :
