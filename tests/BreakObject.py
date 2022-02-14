@@ -4,13 +4,18 @@ sys.path.append(parentdir)
 
 from pySQLBuilder.QueryObject import QueryObject
 from pySQLBuilder.Builder import SelectBuilder, InsertBuilder, UpdateBuilder, DeleteBuilder
-from pySQLBuilder.Structure import Table, Column, Value, Clause, Order, Limit
+from pySQLBuilder.Structure import Table, Column, Value, Clause, Order, Limit, Expression, Join
 
 def table(table: Table) -> tuple :
     return (table.name(), table.alias())
 
-def column(column: Column) -> tuple :
-    return (column.table(), column.name(), column.function(), column.alias())
+def column(column) -> tuple :
+    col = ()
+    if isinstance(column, Column) :
+        col = (column.table(), column.name(), column.function(), column.alias())
+    elif isinstance(column, Expression) :
+        col = expression(column)
+    return col
 
 def value(value: Value) -> tuple :
     pairs = ()
@@ -19,7 +24,12 @@ def value(value: Value) -> tuple :
     return pairs
 
 def clause(clause: Clause) -> tuple :
-    col = column(clause.column())
+    col = ()
+    clauseCol = clause.column()
+    if isinstance(clauseCol, Column) :
+        col = column(clauseCol)
+    elif isinstance(clauseCol, Expression) :
+        col = expression(clauseCol)
     return (col, clause.operator(), clause.value(), clause.conjunctive(), clause.level())
 
 def order(order: Order) -> tuple :
@@ -29,11 +39,26 @@ def order(order: Order) -> tuple :
 def limit(limit: Limit) -> tuple :
     return (limit.limit(), limit.offset())
 
+def expression(exps: Expression) -> tuple :
+    return (exps.expression(), exps.alias(), exps.params())
+
+def join(join: Join) -> tuple :
+    baseColumns = ()
+    joinColumns = ()
+    usingColumns = ()
+    for baseCol in join.baseColumns() :
+        baseColumns += (column(baseCol),)
+    for joinCol in join.joinColumns() :
+        joinColumns += (column(joinCol),)
+    for usingCol in join.usingColumns() :
+        usingColumns += (column(usingCol),)
+    return (join.joinType(), join.baseTable(), join.joinTable(), join.joinAlias(), baseColumns, joinColumns, usingColumns)
+
 def printTable(tableObject: Table) :
     tableBreak = table(tableObject)
     print("Table{}".format(tableBreak))
 
-def printColumn(columnObject: Column, label = "Column") :
+def printColumn(columnObject, label = "Column") :
     columnBreak = column(columnObject)
     print("{0}{1}".format(label, columnBreak))
 
@@ -53,6 +78,10 @@ def printLimit(limitObject: Limit) :
     limitBreak = limit(limitObject)
     print("Limit{}".format(limitBreak))
 
+def printJoin(joinObject: Join) :
+    joinBreak = join(joinObject)
+    print("Join{}".format(joinBreak))
+
 def printSelectBuilder(selectBuilder: SelectBuilder) :
     print("Type: {}".format(selectBuilder.builderType()))
     printTable(selectBuilder.getTable())
@@ -62,12 +91,14 @@ def printSelectBuilder(selectBuilder: SelectBuilder) :
         printClause(where, "Where")
     for group in selectBuilder.getGroup() :
         printColumn(group, "Group")
-    for where in selectBuilder.getHaving() :
-        printClause(where, "Having")
+    for having in selectBuilder.getHaving() :
+        printClause(having, "Having")
     for order in selectBuilder.getOrder() :
         printOrder(order)
     if selectBuilder.hasLimit() :
         printLimit(selectBuilder.getLimit())
+    for join in selectBuilder.getJoin() :
+        printJoin(join)
 
 def printInsertBuilder(insertBuilder: InsertBuilder) :
     print("Type: {}".format(insertBuilder.builderType()))
@@ -86,6 +117,8 @@ def printUpdateBuilder(updateBuilder: UpdateBuilder) :
         printClause(where, "Where")
     if updateBuilder.hasLimit() :
         printLimit(updateBuilder.getLimit())
+    for join in updateBuilder.getJoin() :
+        printJoin(join)
 
 def printDeleteBuilder(deleteBuilder: DeleteBuilder) :
     print("Type: {}".format(deleteBuilder.builderType()))
@@ -107,6 +140,5 @@ def query(query: QueryObject) -> tuple :
 
 def printQuery(queryObject: QueryObject) :
     pairs = query(queryObject)
-    string = ""
     for pair in pairs :
-        print("{}  ||  {}".format(pair[0], pair[1]))
+        print("{}<-|->{}".format(pair[0], pair[1]))

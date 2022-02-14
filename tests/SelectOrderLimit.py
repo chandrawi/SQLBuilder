@@ -4,22 +4,16 @@ import os, sys
 parentdir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 sys.path.append(parentdir)
 
-import pySQLBuilder
+import pySQLBuilder as sql
 
-builder = pySQLBuilder \
-    .select({'data': 'data_table'}) \
-    .column('UNIX_TIMESTAMP(ts)') \
-    .columns({'alias1': 'col1', 'alias2': 'col2'}) \
-    .columns(('col3', 'col4', 'col5')) \
-    .where('col1', '>=', 0) \
-        .beginAndWhere() \
-        .where('col2', 'IN', ['value0', 'value1', 'value2']) \
-        .orWhere('col3', 'BETWEEN', ['minValue', 'maxValue']) \
-        .endWhere() \
-    .groupBy('col1') \
-    .having('col4', '=', 'havingValue') \
+sql.translator = sql.TRANSLATOR_GENERIC
+sql.bindingOption = sql.PARAM_NUM
+
+builder = sql \
+    .select('table') \
     .orderByAsc('col1') \
-    .limit(100)
+    .orderByDesc('col2') \
+    .limit(25, 50)
 builderObject = builder.getBuilder()
 builder.translate()
 queryObject = builder.getQueryObject()

@@ -4,14 +4,15 @@ import os, sys
 parentdir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 sys.path.append(parentdir)
 
-import pySQLBuilder
+import pySQLBuilder as sql
 
-builder = pySQLBuilder \
-    .update('data_table') \
-    .set({'col1': 'val1.1', 'col2': 'val2.1'}) \
-    .where('col1', '>=', 0) \
-    .orWhere('col3', 'BETWEEN', ['minValue', 'maxValue']) \
-    .limit(100)
+sql.translator = sql.TRANSLATOR_GENERIC
+sql.bindingOption = sql.PARAM_NUM
+
+builder = sql \
+    .update('table') \
+    .set({'col1': 'val1', 'col2': 'val2', 'col3': 'val3'}) \
+    .limit(1)
 builderObject = builder.getBuilder()
 builder.translate()
 queryObject = builder.getQueryObject()

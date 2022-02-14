@@ -4,19 +4,25 @@ import os, sys
 parentdir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 sys.path.append(parentdir)
 
-import pySQLBuilder
+import pySQLBuilder as sql
 
-builder = pySQLBuilder \
-    .delete('data_table') \
+sql.translator = sql.TRANSLATOR_GENERIC
+sql.bindingOption = sql.PARAM_NUM
+
+builder = sql \
+    .update('table') \
+    .set({'col1': 'val1', 'col2': 'val2', 'col3': 'val3'}) \
     .where('col1', '>=', 0) \
-    .orWhere('col3', 'BETWEEN', ['minValue', 'maxValue']) \
-    .limit(100)
+    .beginAndWhere() \
+    .where('col2', '=', 'string') \
+    .where('col3', 'IN', ['value0', 'value1', 'value2']) \
+    .endWhere()
 builderObject = builder.getBuilder()
 builder.translate()
 queryObject = builder.getQueryObject()
 
 print("--------------\nBUILDER OBJECT\n--------------")
-BreakObject.printDeleteBuilder(builderObject)
+BreakObject.printUpdateBuilder(builderObject)
 
 print("------------\nQUERY OBJECT\n------------")
 BreakObject.printQuery(queryObject)
