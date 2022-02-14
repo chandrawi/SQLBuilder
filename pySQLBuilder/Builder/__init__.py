@@ -8,3 +8,4 @@ from .Component import HavingBuilder
 from .Component import GroupByBuilder
 from .Component import OrderByBuilder
 from .Component import LimitBuilder
+from .Component import JoinBuilder

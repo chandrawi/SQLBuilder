@@ -5,3 +5,4 @@ from .Clause import Clause
 from .Order import Order
 from .Limit import Limit
 from .Expression import Expression
+from .Join import Join

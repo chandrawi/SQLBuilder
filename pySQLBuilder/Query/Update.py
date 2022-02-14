@@ -1,9 +1,9 @@
 from .BaseQuery import BaseQuery
-from .Component import Clauses, Where, LimitOffset
+from .Component import Clauses, Where, LimitOffset, JoinTable
 from ..Builder import BaseBuilder, UpdateBuilder
 from ..Structure import Table, Value
 
-class Update(BaseQuery, Clauses, Where, LimitOffset) :
+class Update(BaseQuery, Clauses, Where, LimitOffset, JoinTable) :
 
     def __init__(self, translator: int, bindingOption: int) :
         BaseQuery.__init__(self)
@@ -14,6 +14,7 @@ class Update(BaseQuery, Clauses, Where, LimitOffset) :
         Clauses.__init__(self)
         Where.__init__(self)
         LimitOffset.__init__(self)
+        JoinTable.__init__(self)
 
     def update(self, table) :
         if table :

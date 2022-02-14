@@ -7,7 +7,7 @@ class Expression :
         countPar = len(params)
         if countExp < countPar :
             params = params[:countExp]
-        if countExp > params :
+        if countExp > countPar :
             for i in range(countPar, countExp) : params += (None,)
         self.__expression = expression
         self.__alias = alias

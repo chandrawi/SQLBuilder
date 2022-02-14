@@ -1,7 +1,7 @@
 from .BaseBuilder import BaseBuilder
-from .Component import WhereBuilder, HavingBuilder, GroupByBuilder, OrderByBuilder, LimitBuilder
+from .Component import WhereBuilder, HavingBuilder, GroupByBuilder, OrderByBuilder, LimitBuilder, JoinBuilder
 
-class SelectBuilder(BaseBuilder, WhereBuilder, HavingBuilder, GroupByBuilder, OrderByBuilder, LimitBuilder) :
+class SelectBuilder(BaseBuilder, WhereBuilder, HavingBuilder, GroupByBuilder, OrderByBuilder, LimitBuilder, JoinBuilder) :
 
     def __init__(self) :
         BaseBuilder.__init__(self)
@@ -10,3 +10,4 @@ class SelectBuilder(BaseBuilder, WhereBuilder, HavingBuilder, GroupByBuilder, Or
         GroupByBuilder.__init__(self)
         OrderByBuilder.__init__(self)
         LimitBuilder.__init__(self)
+        JoinBuilder.__init__(self)

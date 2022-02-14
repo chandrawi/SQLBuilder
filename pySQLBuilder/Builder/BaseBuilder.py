@@ -1,4 +1,4 @@
-from ..Structure import Table, Column, Value
+from ..Structure import Table, Column, Value, Expression
 
 class BaseBuilder :
 
@@ -36,7 +36,7 @@ class BaseBuilder :
         return len(self.__columns)
 
     def addColumn(self, column) :
-        if isinstance(column, Column) :
+        if isinstance(column, Column) or isinstance(column, Expression) :
             self.__columns = self.__columns + (column,)
 
     def getValues(self) -> tuple :

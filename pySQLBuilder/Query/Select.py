@@ -1,10 +1,10 @@
 from .BaseQuery import BaseQuery
-from .Component import Clauses, Where, Having, GroupBy, OrderBy, LimitOffset
+from .Component import Clauses, Where, Having, GroupBy, OrderBy, LimitOffset, JoinTable
 from ..Builder import BaseBuilder, SelectBuilder
 from ..Structure import Table, Column, Expression
 from typing import Iterable, Mapping
 
-class Select(BaseQuery, Clauses, Where, Having, GroupBy, OrderBy, LimitOffset) :
+class Select(BaseQuery, Clauses, Where, Having, GroupBy, OrderBy, LimitOffset, JoinTable) :
 
     def __init__(self, translator: int, bindingOption: int) :
         BaseQuery.__init__(self)
@@ -18,6 +18,7 @@ class Select(BaseQuery, Clauses, Where, Having, GroupBy, OrderBy, LimitOffset) :
         GroupBy.__init__(self)
         OrderBy.__init__(self)
         LimitOffset.__init__(self)
+        JoinTable.__init__(self)
 
     def select(self, table) :
         if table :
