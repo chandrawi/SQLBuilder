@@ -1,5 +1,6 @@
-from typing import Iterable
 from .Column import Column
+from .Expression import Expression
+from typing import Iterable
 
 class Clause :
 
@@ -64,7 +65,10 @@ class Clause :
 
     @classmethod
     def create(cls, clauseType: int, column, operator, value, conjunctive: int) :
-        columnObject = Column.create(column)
+        if isinstance(column, Expression) :
+            columnObject = column
+        else :
+            columnObject = Column.create(column)
         validOperator = cls.getOperator(operator)
         validValue = cls.getValue(value, validOperator)
         conjunctive = cls.getConjunctive(clauseType, conjunctive)

@@ -1,5 +1,6 @@
-from ...Structure import Clause
+from ...Structure import Clause, Expression
 from ...Builder import WhereBuilder
+from typing import Iterable
 
 class Where :
 
@@ -58,3 +59,19 @@ class Where :
 
     def notOrWhere(self, column, operator, value = None) :
         return self.__where(column, operator, value, Clause.CONJUNCTIVE_NOT_OR)
+
+    def whereExpression(self, expression, operator, value, params: Iterable = ()) :
+        expressionObject = Expression.create(expression, '', params)
+        return self.__where(expressionObject, operator, value, Clause.CONJUNCTIVE_AND)
+
+    def orWhereExpression(self, expression, operator, value, params: Iterable = ()) :
+        expressionObject = Expression.create(expression, '', params)
+        return self.__where(expressionObject, operator, value, Clause.CONJUNCTIVE_OR)
+
+    def notWhereExpression(self, expression, operator, value, params: Iterable = ()) :
+        expressionObject = Expression.create(expression, '', params)
+        return self.__where(expressionObject, operator, value, Clause.CONJUNCTIVE_NOT_AND)
+
+    def notOrWhereExpression(self, expression, operator, value, params: Iterable = ()) :
+        expressionObject = Expression.create(expression, '', params)
+        return self.__where(expressionObject, operator, value, Clause.CONJUNCTIVE_NOT_OR)

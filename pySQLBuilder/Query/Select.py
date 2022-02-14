@@ -1,7 +1,7 @@
 from .BaseQuery import BaseQuery
 from .Component import Clauses, Where, Having, GroupBy, OrderBy, LimitOffset
 from ..Builder import BaseBuilder, SelectBuilder
-from ..Structure import Table, Column
+from ..Structure import Table, Column, Expression
 from typing import Iterable, Mapping
 
 class Select(BaseQuery, Clauses, Where, Having, GroupBy, OrderBy, LimitOffset) :
@@ -44,4 +44,9 @@ class Select(BaseQuery, Clauses, Where, Having, GroupBy, OrderBy, LimitOffset) :
                 columnObjects += (Column.create(col),)
         for col in columnObjects :
             self.builder.addColumn(col)
+        return self
+
+    def columnExpression(self, expression, alias, params: Iterable = ()) :
+        expressionObject = Expression.create(expression, alias, params)
+        self.builder.addColumn(expressionObject)
         return self

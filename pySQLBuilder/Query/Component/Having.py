@@ -1,5 +1,6 @@
-from ...Structure import Clause
+from ...Structure import Clause, Expression
 from ...Builder import HavingBuilder
+from typing import Iterable
 
 class Having :
 
@@ -58,3 +59,19 @@ class Having :
 
     def notOrHaving(self, column, operator: str, value = None) :
         return self.__having(column, operator, value, Clause.CONJUNCTIVE_NOT_OR)
+
+    def havingExpression(self, expression, operator, value, params: Iterable = ()) :
+        expressionObject = Expression.create(expression, '', params)
+        return self.__having(expressionObject, operator, value, Clause.CONJUNCTIVE_AND)
+
+    def orHavingExpression(self, expression, operator, value, params: Iterable = ()) :
+        expressionObject = Expression.create(expression, '', params)
+        return self.__having(expressionObject, operator, value, Clause.CONJUNCTIVE_OR)
+
+    def notHavingExpression(self, expression, operator, value, params: Iterable = ()) :
+        expressionObject = Expression.create(expression, '', params)
+        return self.__having(expressionObject, operator, value, Clause.CONJUNCTIVE_NOT_AND)
+
+    def notOrHavingExpression(self, expression, operator, value, params: Iterable = ()) :
+        expressionObject = Expression.create(expression, '', params)
+        return self.__having(expressionObject, operator, value, Clause.CONJUNCTIVE_NOT_OR)
