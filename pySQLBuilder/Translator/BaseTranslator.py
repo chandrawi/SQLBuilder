@@ -1,6 +1,6 @@
 from ..QueryObject import QueryObject
 from ..Builder import BaseBuilder
-from ..Structure import Table, Column, Value, Clause, Order, Limit
+from ..Structure import Table, Column, Value, Clause, Order, Limit, Expression, Join
 
 class BaseTranslator :
 
@@ -23,6 +23,8 @@ class BaseTranslator :
             query.add('UPDATE ')
         elif builderType == BaseBuilder.DELETE :
             query.add('DELETE')
+        elif builderType == BaseBuilder.SELECT_DISTINCT :
+            query.add('SELECT DISTINCT ')
 
     def fromTable(self, query: QueryObject, table: Table) :
         name = table.name()
@@ -45,26 +47,32 @@ class BaseTranslator :
         query.add(name)
         query.add(self.quote_struct)
 
-    def columnsSelect(self, query: QueryObject, columns: tuple, count: int) :
+    def columnsSelect(self, query: QueryObject, columns: tuple, count: int, multiTableFlag: bool = False) :
         if count == 0 :
             query.add('*')
             return
         for column in columns :
             if isinstance(column, Column) :
+                table = column.table()
                 name = column.name()
                 alias = column.alias()
                 function = column.function()
                 if function :
                     query.add(function + self.open_bracket)
                 query.add(self.quote_struct)
+                if table and multiTableFlag :
+                    query.add(table)
+                    query.add(self.quote_struct + self.dot + self.quote_struct)
                 query.add(name)
                 query.add(self.quote_struct)
                 if function :
                     query.add(self.close_bracket)
                 if alias :
                     query.add(' AS ' + self.quote_string + alias + self.quote_string)
-                count -= 1
-                if count > 0 : query.add(self.comma)
+            elif isinstance(column, Expression) :
+                self.expression(query, column)
+            count -= 1
+            if count > 0 : query.add(self.comma)
 
     def columnsInsert(self, query: QueryObject, values: tuple, count: int) :
         if count == 0 :
@@ -84,7 +92,8 @@ class BaseTranslator :
                 if count > 0 : query.add(self.comma)
             query.add(self.close_bracket)
 
-    def column(self, query: QueryObject, column: Column) :
+    def column(self, query: QueryObject, column: Column, multiTableFlag: bool = False) :
+        table = column.table()
         name = column.name()
         alias = column.alias()
         function = column.function()
@@ -96,6 +105,9 @@ class BaseTranslator :
             query.add(self.quote_struct)
         else :
             query.add(self.quote_struct)
+            if table and multiTableFlag :
+                query.add(table)
+                query.add(self.quote_struct + self.dot + self.quote_struct)
             query.add(name)
             query.add(self.quote_struct)
         if function :
@@ -120,15 +132,19 @@ class BaseTranslator :
             count -= 1
             if count > 0 : query.add(self.comma)
 
-    def valuesUpdate(self, query: QueryObject, values: tuple, count: int) :
+    def valuesUpdate(self, query: QueryObject, values: tuple, count: int, multiTableFlag: bool = False) :
         query.add(' SET ')
         for value in values :
             if isinstance(value, Value) :
+                table = value.table()
                 columns = value.columns()
                 vals = value.values()
                 countVals = len(vals)
                 for i, val in enumerate(vals) :
                     query.add(self.quote_struct)
+                    if multiTableFlag :
+                        query.add(table)
+                        query.add(self.quote_struct + self.dot + self.quote_struct)
                     query.add(columns[i])
                     query.add(self.quote_struct + self.equal)
                     query.add(val, True)
@@ -136,6 +152,62 @@ class BaseTranslator :
                     if countVals > 0 : query.add(self.comma)
             count -= 1
             if count > 1 : query.add(self.comma)
+
+    def expression(self, query: QueryObject, expression: Expression) :
+        params = expression.params()
+        exps = expression.expression()
+        alias = expression.alias()
+        for i in range(len(exps)) :
+            query.add(exps[i])
+            if params[i] is not None : query.add(params[i], True)
+        if alias :
+            query.add(' AS ' + self.quote_struct)
+            query.add(alias)
+            query.add(self.quote_struct)
+
+    def join(self, query: QueryObject, joins: tuple) :
+        for join in joins :
+            if isinstance(join, Join) :
+                joinType = self.joinType(join.joinType())
+                query.add(joinType)
+                self.joinTable(query, join.joinTable(), join.joinAlias())
+                self.joinColumns(query, join.baseColumns(), join.joinColumns(), join.usingColumns())
+
+    def joinType(self, joinType: int) -> str :
+        if joinType == Join.INNER_JOIN :
+            return ' INNER JOIN '
+        elif joinType == Join.LEFT_JOIN :
+            return ' LEFT JOIN '
+        elif joinType == Join.RIGHT_JOIN :
+            return ' RIGHT JOIN '
+        elif joinType == Join.OUTER_JOIN :
+            return ' OUTER JOIN '
+        else :
+            return ''
+
+    def joinTable(self, query: QueryObject, joinTable: str, joinAlias: str) :
+        query.add(self.quote_struct)
+        query.add(joinTable)
+        if joinAlias :
+            query.add(self.quote_struct + ' AS ' + self.quote_struct + joinAlias)
+        query.add(self.quote_struct)
+
+    def joinColumns(self, query: QueryObject, baseColumns: tuple, joinColumns: tuple, usingColumns: tuple) :
+        count = len(usingColumns)
+        if count :
+            query.add(' USING ' + self.open_bracket)
+            for column in usingColumns :
+                self.column(query, column, True)
+                count -= 1
+                if count > 1 : query.add(self.comma)
+            query.add(self.close_bracket)
+        else :
+            for i in range(len(baseColumns)) :
+                if i == 0 : query.add(' ON ') 
+                else : query.add(' AND ')
+                self.column(query, baseColumns[i], True)
+                query.add(self.equal)
+                self.column(query, joinColumns[i], True)
 
     def operator(self, operator: int) -> str :
         if operator == Clause.OPERATOR_EQUAL :
@@ -191,7 +263,7 @@ class BaseTranslator :
                 string += self.close_bracket
         return string
 
-    def where(self, query: QueryObject, whereClauses: tuple, count: int) :
+    def where(self, query: QueryObject, whereClauses: tuple, count: int, multiTableFlag: bool = False) :
         if count :
             query.add(' WHERE ')
             for where in whereClauses :
@@ -200,10 +272,10 @@ class BaseTranslator :
                     nestedLevel = where.level()
                     query.add(conjunctive)
                     if nestedLevel < 0 : query.add(self.brackets(nestedLevel))
-                    self.clause(query, where)
+                    self.clause(query, where, multiTableFlag)
                     if nestedLevel > 0 : query.add(self.brackets(nestedLevel))
 
-    def having(self, query: QueryObject, havingClauses: tuple, count: int) :
+    def having(self, query: QueryObject, havingClauses: tuple, count: int, multiTableFlag: bool = False) :
         if count :
             query.add(' HAVING ')
             for having in havingClauses :
@@ -212,25 +284,28 @@ class BaseTranslator :
                     nestedLevel = having.level()
                     query.add(conjunctive)
                     if nestedLevel < 0 : query.add(self.brackets(nestedLevel))
-                    self.clause(query, having)
+                    self.clause(query, having, multiTableFlag)
                     if nestedLevel > 0 : query.add(self.brackets(nestedLevel))
 
-    def clause(self, query: QueryObject, clause: Clause) :
+    def clause(self, query: QueryObject, clause: Clause, multiTableFlag: bool = False) :
         column = clause.column()
         operator = clause.operator()
         value = clause.value()
         if isinstance(column, Column) :
-            self.column(query, column)
-        if operator == Clause.OPERATOR_BETWEEN :
+            self.column(query, column, multiTableFlag)
+        elif isinstance(column, Expression) :
+            self.expression(query, column)
+        if operator == Clause.OPERATOR_BETWEEN or operator == Clause.OPERATOR_NOT_BETWEEN :
             self.clauseBetween(query, value)
-        elif operator == Clause.OPERATOR_IN :
+        elif operator == Clause.OPERATOR_IN or operator == Clause.OPERATOR_NOT_IN :
             self.clauseIn(query, value)
         else :
             self.clauseComparison(query, value, operator)
 
     def clauseComparison(self, query: QueryObject, value, operator: int) :
         query.add(self.operator(operator))
-        query.add(value, True)
+        if operator != Clause.OPERATOR_NULL and operator != Clause.OPERATOR_NOT_NULL :
+            query.add(value, True)
 
     def clauseBetween(self, query: QueryObject, value) :
         query.add(self.operator(Clause.OPERATOR_BETWEEN))
@@ -247,21 +322,21 @@ class BaseTranslator :
             if i < count - 1 : query.add(self.comma)
         query.add(self.close_bracket)
 
-    def groupBy(self, query: QueryObject, groups: tuple, count: int) :
+    def groupBy(self, query: QueryObject, groups: tuple, count: int, multiTableFlag: bool = False) :
         if count :
             query.add(' GROUP BY ')
             for group in groups :
                 if isinstance(group, Column) :
-                    self.column(query, group)
+                    self.column(query, group, multiTableFlag)
                     count -= 1
                     if count > 0 : query.add(self.comma)
 
-    def orderBy(self, query: QueryObject, orders: tuple, count: int) :
+    def orderBy(self, query: QueryObject, orders: tuple, count: int, multiTableFlag: bool = False) :
         if count :
             query.add(' ORDER BY ')
             for order in orders :
                 if isinstance(order, Order) :
-                    self.column(query, order.column())
+                    self.column(query, order.column(), multiTableFlag)
                     if (order.orderType() == Order.ORDER_ASC) :
                         query.add(' ASC')
                     elif (order.orderType() == Order.ORDER_DESC) :
@@ -269,8 +344,8 @@ class BaseTranslator :
                     count -= 1
                     if count > 0 : query.add(self.comma)
 
-    def limitOffset(self, query: QueryObject, limitOffset: Limit, flag: bool) :
-        if flag :
+    def limitOffset(self, query: QueryObject, limitOffset: Limit, hasLimit: bool) :
+        if hasLimit :
             limit = limitOffset.limit()
             offset = limitOffset.offset()
             if limit == Limit.NOT_SET :

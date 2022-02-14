@@ -28,6 +28,10 @@ class Select(BaseQuery, Clauses, Where, Having, GroupBy, OrderBy, LimitOffset, J
             raise Exception("Table name is not defined")
         return self
 
+    def selectDistinct(self, table) :
+        self.builder.builderType(BaseBuilder.SELECT_DISTINCT)
+        return self.select(table)
+
     def column(self, column) :
         columnObject = Column.create(column)
         self.builder.addColumn(columnObject)

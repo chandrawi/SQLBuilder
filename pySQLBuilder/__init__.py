@@ -13,6 +13,11 @@ def select(table_ = None) -> Select :
     selectQuery = Select(translator, bindingOption)
     return selectQuery.select(table_)
 
+def selectDistinct(table_ = None) -> Select :
+    if table_ is None : table_ = table
+    selectQuery = Select(translator, bindingOption)
+    return selectQuery.selectDistinct(table_)
+
 def insert(table_ = None) -> Insert :
     if table_ is None : table_ = table
     insertQuery = Insert(translator, bindingOption)

@@ -16,13 +16,15 @@ class GenericTranslator(BaseTranslator) :
         self.end_query = ""
 
     def translateSelect(self, query: QueryObject, builder: SelectBuilder) :
+        multiTableFlag = bool(builder.countJoin())
         self.firstKeyword(query, builder.builderType())
-        self.columnsSelect(query, builder.getColumns(), builder.countColumns())
+        self.columnsSelect(query, builder.getColumns(), builder.countColumns(), multiTableFlag)
         self.fromTable(query, builder.getTable())
-        self.where(query, builder.getWhere(), builder.countWhere())
-        self.groupBy(query, builder.getGroup(), builder.countGroup())
-        self.having(query, builder.getHaving(), builder.countHaving())
-        self.orderBy(query, builder.getOrder(), builder.countOrder())
+        self.join(query, builder.getJoin())
+        self.where(query, builder.getWhere(), builder.countWhere(), multiTableFlag)
+        self.groupBy(query, builder.getGroup(), builder.countGroup(), multiTableFlag)
+        self.having(query, builder.getHaving(), builder.countHaving(), multiTableFlag)
+        self.orderBy(query, builder.getOrder(), builder.countOrder(), multiTableFlag)
         self.limitOffset(query, builder.getLimit(), builder.hasLimit())
 
     def translateInsert(self, query: QueryObject, builder: InsertBuilder) :
@@ -33,10 +35,12 @@ class GenericTranslator(BaseTranslator) :
         self.limitOffset(query, builder.getLimit(), builder.hasLimit())
 
     def translateUpdate(self, query: QueryObject, builder: UpdateBuilder) :
+        multiTableFlag = bool(builder.countJoin())
         self.firstKeyword(query, builder.builderType())
         self.tableSet(query, builder.getTable())
-        self.valuesUpdate(query, builder.getValues(), builder.countValues())
-        self.where(query, builder.getWhere(), builder.countWhere())
+        self.join(query, builder.getJoin())
+        self.valuesUpdate(query, builder.getValues(), builder.countValues(), multiTableFlag)
+        self.where(query, builder.getWhere(), builder.countWhere(), multiTableFlag)
         self.limitOffset(query, builder.getLimit(), builder.hasLimit())
 
     def translateDelete(self, query: QueryObject, builder: DeleteBuilder) :
