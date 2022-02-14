@@ -4,13 +4,7 @@ from ...Builder import LimitBuilder
 class LimitOffset :
 
     def limit(self, limit, offset = Limit.NOT_SET) :
-        validLimit = Limit.NOT_SET
-        validOffset = Limit.NOT_SET
-        if isinstance(limit, int) :
-            if limit > 0: validLimit = limit
-        if isinstance(offset, int) :
-            if offset > 0: validOffset = offset
-        limitObject = Limit(validLimit, validOffset)
+        limitObject = Limit.create(limit, offset)
         if isinstance(self.builder, LimitBuilder) :
             self.builder.setLimit(limitObject)
         else :

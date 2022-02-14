@@ -29,8 +29,10 @@ class Having :
         return self
 
     def endHaving(self) :
-        lastLevel = self.builder.lastHaving().level()
-        self.builder.editHavingLevel(lastLevel + 1)
+        lastClause = self.builder.lastHaving()
+        if isinstance(lastClause, Clause) :
+            lastLevel = lastClause.level()
+            lastClause.level(lastLevel + 1)
         return self
 
     def __having(self, column, operator, value, conjunctive: int) :

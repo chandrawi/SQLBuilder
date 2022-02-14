@@ -59,19 +59,19 @@ class Clause :
         return self.__conjunctive
 
     def level(self, input: int = -1) -> int :
-        if input != -1 : self.__level = input
+        if input > -1 : self.__level = input
         return self.__level
 
     @classmethod
-    def create(cls, clauseType: int, column, operator, values, conjunctive: int) :
+    def create(cls, clauseType: int, column, operator, value, conjunctive: int) :
         columnObject = Column.create(column)
         validOperator = cls.getOperator(operator)
-        validValues = cls.getValues(values, validOperator)
+        validValue = cls.getValue(value, validOperator)
         conjunctive = cls.getConjunctive(clauseType, conjunctive)
         nestedLevel = cls.nestedLevel
         cls.clauseType = clauseType
         cls.nestedLevel = 0
-        return Clause(columnObject, validOperator, validValues, conjunctive, nestedLevel)
+        return Clause(columnObject, validOperator, validValue, conjunctive, nestedLevel)
 
     @classmethod
     def getOperator(cls, operator) -> int :
@@ -111,17 +111,17 @@ class Clause :
         return validOperator
 
     @classmethod
-    def getValues(cls, values, operator: int) :
+    def getValue(cls, value, operator: int) :
         valid = True
         if operator == Clause.OPERATOR_BETWEEN or operator == Clause.OPERATOR_NOT_BETWEEN :
-            if isinstance(values, Iterable) :
-                valid = len(values) == 2
+            if isinstance(value, Iterable) :
+                valid = len(value) == 2
         if operator == Clause.OPERATOR_IN or operator == Clause.OPERATOR_NOT_IN :
-            valid = isinstance(values, Iterable)
+            valid = isinstance(value, Iterable)
         if valid :
-            return values
+            return value
         else :
-            raise Exception('Invalid input values for Where or Having clause')
+            raise Exception('Invalid input value for Where or Having clause')
 
     @classmethod
     def getConjunctive(cls, clauseType: int, conjunctive: int) -> int :

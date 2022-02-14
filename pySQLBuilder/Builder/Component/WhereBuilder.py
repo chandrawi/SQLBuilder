@@ -19,8 +19,3 @@ class WhereBuilder :
 
     def addWhere(self, where: Clause) :
         self.__where += (where,)
-
-    def editWhereLevel(self, nestedLevel: int) :
-        count = len(self.__where)
-        if count > 0 :
-            self.__where[count-1].level(nestedLevel)

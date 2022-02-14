@@ -19,8 +19,3 @@ class HavingBuilder :
 
     def addHaving(self, having: Clause) :
         self.__having += (having,)
-
-    def editHavingLevel(self, nestedLevel: int) :
-        count = len(self.__having)
-        if count > 0 :
-            self.__having[count-1].level(nestedLevel)

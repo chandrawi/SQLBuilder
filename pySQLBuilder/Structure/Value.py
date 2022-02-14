@@ -1,3 +1,4 @@
+from .Table import Table
 from typing import Iterable, Mapping
 
 class Value :
@@ -31,7 +32,7 @@ class Value :
             values = tuple(inputValue.values())
         elif isinstance(inputValue, Iterable) :
             (columns, values) = cls.parsePair(inputValue)
-        return Value(cls.table, columns, values)
+        return Value(Table.table, columns, values)
 
     @classmethod
     def parsePair(cls, pairs: Iterable) -> tuple :

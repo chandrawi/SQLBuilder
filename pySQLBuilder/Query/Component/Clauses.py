@@ -4,16 +4,14 @@ from ...Builder import WhereBuilder, HavingBuilder
 class Clauses :
 
     def __clauses(self, column, operator: int, value, conjunctive: int) :
-        clauseObject = Clause.create(Clause.NONE, column, operator, value, conjunctive)
-        if isinstance(self.builder, WhereBuilder) and isinstance(self.builder, HavingBuilder) :
+        clauseType = Clause.clauseType
+        if clauseType == Clause.NONE : clauseType = Clause.WHERE
+        clauseObject = Clause.create(clauseType, column, operator, value, conjunctive)
+        if isinstance(self.builder, WhereBuilder) or isinstance(self.builder, HavingBuilder) :
             if Clause.clauseType == Clause.HAVING :
                 self.builder.addHaving(clauseObject)
             else :
                 self.builder.addWhere(clauseObject)
-        elif isinstance(self.builder, WhereBuilder) :
-            self.builder.addWhere(clauseObject)
-        elif isinstance(self.builder, HavingBuilder) :
-            self.builder.addHaving(clauseObject)
         else :
             raise Exception('Builder object does not support WHERE or HAVING query')
         return self
