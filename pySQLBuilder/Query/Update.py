@@ -20,8 +20,6 @@ class Update(BaseQuery, Clauses, Where, LimitOffset, JoinTable) :
         self.translator = translator
         self.bindingOption = bindingOption
         Clauses.__init__(self)
-        Where.__init__(self)
-        LimitOffset.__init__(self)
         JoinTable.__init__(self)
 
     def update(self, table) :

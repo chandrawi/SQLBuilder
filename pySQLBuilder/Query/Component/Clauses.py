@@ -6,6 +6,11 @@ class Clauses :
     Used for WHERE and HAVING query.
     """
 
+    def __init__(self) :
+        Clause.clauseType = Clause.NONE
+        Clause.nestedConjunctive = Clause.CONJUNCTIVE_NONE
+        Clause.nestedLevel = 0
+
     def __clauses(self, column, operator: int, value, conjunctive: int) :
         """Add Clause object to where or having property of builder object"""
         clauseType = Clause.clauseType

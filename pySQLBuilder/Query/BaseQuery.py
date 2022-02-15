@@ -12,7 +12,8 @@ class BaseQuery :
         self.builder = None
         self.translator = 0
         self.bindingOption = 0
-        self.translateFlag = True
+        self.queryFlag = False
+        self.paramFlag = False
 
     def getQueryObject(self) :
         """Get current state of query object"""
@@ -30,16 +31,16 @@ class BaseQuery :
 
     def query(self, translator: int = 0, bindingOption: int = 0) :
         """Get query string of current state builder object"""
-        if self.translateFlag :
+        if self.queryFlag == self.paramFlag :
             self.translate(translator)
-            self.translateFlag = False
+        self.queryFlag = not self.queryFlag
         if bindingOption == 0 : bindingOption = self.bindingOption
         return QueryTranslator.getQuery(self.queryObject, bindingOption)
 
     def params(self, translator: int = 0, bindingOption: int = 0) :
         """Get query parameters of current state builder object"""
-        if self.translateFlag :
+        if self.queryFlag == self.paramFlag :
             self.translate(translator)
-            self.translateFlag = False
+        self.paramFlag = not self.paramFlag
         if bindingOption == 0 : bindingOption = self.bindingOption
         return QueryTranslator.getParams(self.queryObject, bindingOption)

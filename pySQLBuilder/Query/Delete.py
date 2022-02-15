@@ -18,8 +18,6 @@ class Delete(BaseQuery, Clauses, Where, LimitOffset) :
         self.translator = translator
         self.bindingOption = bindingOption
         Clauses.__init__(self)
-        Where.__init__(self)
-        LimitOffset.__init__(self)
 
     def delete(self, table) :
         """DELETE query table input"""

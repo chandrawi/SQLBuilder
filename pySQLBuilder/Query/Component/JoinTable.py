@@ -7,6 +7,9 @@ class JoinTable :
     Used for INNER JOIN, LEFT JOIN, RIGHT JOIN, OUTER JOIN query.
     """
 
+    def __init__(self) :
+        Join.table = ''
+
     def __join(self, joinTable, joinType) :
         """Add Join object to join property of Builder object"""
         joinObject = Join.create(joinTable, joinType)

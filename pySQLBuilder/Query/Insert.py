@@ -18,7 +18,6 @@ class Insert(BaseQuery, LimitOffset) :
         self.builder.builderType(BaseBuilder.INSERT)
         self.translator = translator
         self.bindingOption = bindingOption
-        LimitOffset.__init__(self)
 
     def insert(self, table) :
         """INSERT INTO query query table input"""

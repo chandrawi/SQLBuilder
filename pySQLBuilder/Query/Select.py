@@ -24,11 +24,6 @@ class Select(BaseQuery, Clauses, Where, Having, GroupBy, OrderBy, LimitOffset, J
         self.translator = translator
         self.bindingOption = bindingOption
         Clauses.__init__(self)
-        Where.__init__(self)
-        Having.__init__(self)
-        GroupBy.__init__(self)
-        OrderBy.__init__(self)
-        LimitOffset.__init__(self)
         JoinTable.__init__(self)
 
     def select(self, table) :

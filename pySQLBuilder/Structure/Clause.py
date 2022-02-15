@@ -38,7 +38,7 @@ class Clause :
     CONJUNCTIVE_NOT_AND = 3
     CONJUNCTIVE_NOT_OR = 4
 
-    clauseType = 0
+    clauseType = NONE
     nestedConjunctive = CONJUNCTIVE_NONE
     nestedLevel = 0
 
