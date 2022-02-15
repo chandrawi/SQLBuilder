@@ -1,9 +1,14 @@
+"""Query translator class.
+Interfacing query class with translator class and translate query object to query string and parameters.
+"""
+
 from .Constant import *
 from .QueryObject import QueryObject
 from .Builder import SelectBuilder, InsertBuilder, UpdateBuilder, DeleteBuilder
 from .Translator import GenericTranslator, MySQLTranslator
 
 def translateBuilder(query: QueryObject, builder, translator: int) :
+    """Translate builder object to query object using selected translator"""
     translatorClass = getTranslator(query, translator)
     if isinstance(builder, SelectBuilder) :
         translatorClass.translateSelect(query, builder)
@@ -17,6 +22,7 @@ def translateBuilder(query: QueryObject, builder, translator: int) :
         raise Exception('Tried to translate unregistered builder object')
 
 def getTranslator(query: QueryObject, translator: int) :
+    """Get selected translator instance"""
     if translator == TRANSLATOR_GENERIC :
         return GenericTranslator(query)
     elif translator == TRANSLATOR_MYSQL :
@@ -25,6 +31,7 @@ def getTranslator(query: QueryObject, translator: int) :
         raise Exception('Translator selected is not registered')
 
 def getBindingOption(bindingOption: int) :
+    """Get binding flag and mode from option"""
     bindingFlag = False
     bindingMode = False
     if bindingOption == PARAM_ASSOC :
@@ -36,6 +43,7 @@ def getBindingOption(bindingOption: int) :
     return (bindingFlag, bindingMode)
 
 def getQuery(query: QueryObject, bindingOption: int) -> str :
+    """Get query string from input query object with binding option"""
     (bindingFlag, bindingMode) = getBindingOption(bindingOption)
     queryString = ''
     parts = query.parts()
@@ -55,6 +63,7 @@ def getQuery(query: QueryObject, bindingOption: int) -> str :
     return queryString
 
 def getParams(query: QueryObject, bindingOption: int) :
+    """Get params from input query object with binding option"""
     (bindingFlag, bindingMode) = getBindingOption(bindingOption)
     array = None
     if bindingFlag :

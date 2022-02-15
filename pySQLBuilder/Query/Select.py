@@ -5,6 +5,17 @@ from ..Structure import Table, Column, Expression
 from typing import Iterable, Mapping
 
 class Select(BaseQuery, Clauses, Where, Having, GroupBy, OrderBy, LimitOffset, JoinTable) :
+    """SELECT query manipulation class.
+    Components:
+    - Table
+    - Select columns
+    - Join table query
+    - Where clause
+    - Group by query
+    - Having clause
+    - Order by query
+    - Limit query
+    """
 
     def __init__(self, translator: int, bindingOption: int) :
         BaseQuery.__init__(self)
@@ -21,6 +32,7 @@ class Select(BaseQuery, Clauses, Where, Having, GroupBy, OrderBy, LimitOffset, J
         JoinTable.__init__(self)
 
     def select(self, table) :
+        """SELECT query table input"""
         if table :
             tableObject = Table.create(table)
             self.builder.setTable(tableObject)
@@ -29,15 +41,24 @@ class Select(BaseQuery, Clauses, Where, Having, GroupBy, OrderBy, LimitOffset, J
         return self
 
     def selectDistinct(self, table) :
+        """SELECT DISTINC query table input"""
         self.builder.builderType(BaseBuilder.SELECT_DISTINCT)
         return self.select(table)
 
     def column(self, column) :
+        """Add a column to builder object.
+        
+        Takes a column name string or a dictionary with keys as column alias.
+        """
         columnObject = Column.create(column)
         self.builder.addColumn(columnObject)
         return self
 
     def columns(self, columns) :
+        """Add multiple columns to builder object.
+        
+        Takes a list containing column name or a dictionary with keys as column alias.
+        """
         columnObjects = ()
         if isinstance(columns, str) :
             columnObjects += (Column.create(columns),)
@@ -52,6 +73,10 @@ class Select(BaseQuery, Clauses, Where, Having, GroupBy, OrderBy, LimitOffset, J
         return self
 
     def columnExpression(self, expression, alias, params: Iterable = ()) :
+        """Add an expression to list of Column in builder object.
+        
+        Takes expression string, expression alias, and list of parameters.
+        """
         expressionObject = Expression.create(expression, alias, params)
         self.builder.addColumn(expressionObject)
         return self

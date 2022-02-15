@@ -1,6 +1,11 @@
 from typing import Mapping
 
 class Table :
+    """Object for storing a table definition.
+    Object properties:
+    - Table name
+    - Table name alias
+    """
 
     table = ''
 
@@ -9,13 +14,16 @@ class Table :
         self.__alias = alias
 
     def name(self) -> str :
+        """Get table name."""
         return self.__name
 
     def alias(self) -> str :
+        """Get table alias."""
         return self.__alias
 
     @classmethod
     def create(cls, table) :
+        """Create table object from string input or ascossiative array with key as alias."""
         name = ''
         alias = ''
         if isinstance(table, str) :

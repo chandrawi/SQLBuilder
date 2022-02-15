@@ -7,7 +7,7 @@ sys.path.append(parentdir)
 import pySQLBuilder as sql
 
 sql.translator = sql.TRANSLATOR_GENERIC
-sql.bindingOption = sql.PARAM_NUM
+sql.binding = sql.PARAM_NUM
 
 builder = sql \
     .insert('table') \

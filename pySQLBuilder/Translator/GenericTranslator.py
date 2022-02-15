@@ -3,6 +3,9 @@ from ..QueryObject import QueryObject
 from ..Builder import SelectBuilder, InsertBuilder, UpdateBuilder, DeleteBuilder
 
 class GenericTranslator(BaseTranslator) :
+    """Translator for generic SQL database.
+    Should works for most of queries in any SQL RDBMS
+    """
 
     def __init__(self, query: QueryObject) :
         query.setMarkQuote("?", ":", "'")
@@ -16,6 +19,7 @@ class GenericTranslator(BaseTranslator) :
         self.end_query = ""
 
     def translateSelect(self, query: QueryObject, builder: SelectBuilder) :
+        """Translate SELECT query from select builder."""
         multiTableFlag = bool(builder.countJoin())
         self.firstKeyword(query, builder.builderType())
         self.columnsSelect(query, builder.getColumns(), builder.countColumns(), multiTableFlag)
@@ -28,6 +32,7 @@ class GenericTranslator(BaseTranslator) :
         self.limitOffset(query, builder.getLimit(), builder.hasLimit())
 
     def translateInsert(self, query: QueryObject, builder: InsertBuilder) :
+        """Translate INSERT query from insert builder."""
         self.firstKeyword(query, builder.builderType())
         self.intoTable(query, builder.getTable())
         self.columnsInsert(query, builder.getValues(), builder.countValues())
@@ -35,6 +40,7 @@ class GenericTranslator(BaseTranslator) :
         self.limitOffset(query, builder.getLimit(), builder.hasLimit())
 
     def translateUpdate(self, query: QueryObject, builder: UpdateBuilder) :
+        """Translate UPDATE query from update builder."""
         multiTableFlag = bool(builder.countJoin())
         self.firstKeyword(query, builder.builderType())
         self.tableSet(query, builder.getTable())
@@ -44,6 +50,7 @@ class GenericTranslator(BaseTranslator) :
         self.limitOffset(query, builder.getLimit(), builder.hasLimit())
 
     def translateDelete(self, query: QueryObject, builder: DeleteBuilder) :
+        """Translate DELETE query from delete builder."""
         self.firstKeyword(query, builder.builderType())
         self.fromTable(query, builder.getTable())
         self.where(query, builder.getWhere(), builder.countWhere())

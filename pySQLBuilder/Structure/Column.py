@@ -2,6 +2,13 @@ from .Table import Table
 from typing import Mapping
 
 class Column :
+    """Object for storing a column definition.
+    Object properties:
+    - Table name or alias
+    - Column name
+    - Column alias
+    - Aggregate function
+    """
 
     def __init__(self, table: str, name: str, function: str = '', alias: str = '') :
         self.__table = table
@@ -10,19 +17,24 @@ class Column :
         self.__alias = alias
 
     def table(self) -> str :
+        """Get table name or table alias of column."""
         return self.__table
 
     def name(self) -> str :
+        """Get name of column."""
         return self.__name
 
     def function(self) -> str :
+        """Get SQL aggregate function."""
         return self.__function
 
     def alias(self) -> str :
+        """Get alias name of column."""
         return self.__alias
 
     @classmethod
     def create(cls, column) :
+        """Create column object from string input or associative array with key as alias."""
         table = ''
         name = ''
         function = ''
@@ -35,6 +47,7 @@ class Column :
 
     @classmethod
     def parseStr(cls, column: str) -> tuple :
+        """Parsing string input column to table, column name, and aggregate function."""
         function = ''
         pos1 = column.find('(')
         pos2 = column.rfind(')')
@@ -59,6 +72,7 @@ class Column :
 
     @classmethod
     def parseMap(cls, column: Mapping) -> tuple :
+        """Parsing array input column to table, column name, aggregate function, and alias name."""
         if len(column) == 1 :
             key = next(iter(column.keys()))
             alias = str(key)

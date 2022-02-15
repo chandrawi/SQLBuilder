@@ -3,6 +3,16 @@ from .Column import Column
 from typing import Mapping
 
 class Join :
+    """Object for storing join table query definition. Used in INNER JOIN, LEFT JOIN, RIGHT JOIN, or OUTER JOIN query
+    Object properties:
+    - Join type
+    - Base table name
+    - Join table name
+    - Join table alias name
+    - List of base column objects
+    - List of join column objects
+    - List of using column objects
+    """
 
     NO_JOIN = 0
     INNER_JOIN = 1
@@ -22,28 +32,36 @@ class Join :
         self.__usingColumns = ()
 
     def joinType(self) -> int :
+        """Get join type."""
         return self.__joinType
 
     def baseTable(self) -> str :
+        """Get base table name."""
         return self.__baseTable
 
     def joinTable(self) -> str :
+        """Get join table name."""
         return self.__joinTable
 
     def joinAlias(self) -> str :
+        """Get join table alias name."""
         return self.__joinAlias
 
     def baseColumns(self) -> tuple :
+        """Get base column objects list."""
         return self.__baseColumns
 
     def joinColumns(self) -> tuple :
+        """Get join column objects list"""
         return self.__joinColumns
 
     def usingColumns(self) -> tuple :
+        """Get using column objects list"""
         return self.__usingColumns
 
     @classmethod
     def create(cls, joinTable, joinType) :
+        """Create join table object from joint type and input table"""
         cls.table = Table.table
         validType = cls.getType(joinType)
         if isinstance(joinTable, Mapping) :
@@ -59,6 +77,7 @@ class Join :
 
     @classmethod
     def getType(cls, joinType) -> int :
+        """Get a valid join type option from input join type."""
         if isinstance(joinType, int) :
             validType = joinType
             if joinType < 0 or joinType > 4 : validType = 0
@@ -76,6 +95,7 @@ class Join :
         return validType
 
     def addColumn(self, baseColumn, joinColumn = None) :
+        """Add columns object property to a join table object."""
         table = Table.table
         Table.table = Join.table
         baseColumnObject = Column.create(baseColumn)

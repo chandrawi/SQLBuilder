@@ -1,6 +1,9 @@
 from ..Structure import Table, Column, Value, Expression
 
 class BaseBuilder :
+    """Base of builder object.
+    Basic template for building a query
+    """
 
     SELECT = 1
     INSERT = 2
@@ -19,31 +22,40 @@ class BaseBuilder :
         self.__values = ()
 
     def builderType(self, type: int = 0) -> int :
+        """Get or set builder object type"""
         if (type > 0 and type <= 9) :
             self.__builderType = type
         return self.__builderType
 
     def getTable(self) -> Table :
+        """Get table of a builder"""
         return self.__table
 
     def setTable(self, table: Table) :
+        """Set table for a builder"""
         self.__table = table
 
     def getColumns(self) -> tuple :
+        """Get list of columns"""
         return self.__columns
 
     def countColumns(self) -> int :
+        """Count column list"""
         return len(self.__columns)
 
     def addColumn(self, column) :
+        """Add a column or column expression to Column list"""
         if isinstance(column, Column) or isinstance(column, Expression) :
             self.__columns = self.__columns + (column,)
 
     def getValues(self) -> tuple :
+        """Get Value list"""
         return self.__values
 
     def countValues(self) -> int :
+        """Count Value list"""
         return len(self.__values)
 
     def addValue(self, value : Value) :
+        """Add a value to Value list"""
         self.__values = self.__values + (value,)

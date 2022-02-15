@@ -3,8 +3,11 @@ from ...Builder import GroupByBuilder
 from typing import Iterable, Mapping
 
 class GroupBy :
+    """GROUP BY manipulation component.
+    """
 
     def groupBy(self, columns) :
+        """GROUP BY query manipulation"""
         columnObjects = ()
         if isinstance(columns, str) :
             columnObjects += (Column.create(columns),)

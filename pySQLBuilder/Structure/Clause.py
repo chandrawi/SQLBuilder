@@ -3,6 +3,14 @@ from .Expression import Expression
 from typing import Iterable
 
 class Clause :
+    """Object for storing a clause query structure. Used in WHERE and HAVING query.
+    Object properties:
+    - Column or Expression object
+    - Clause operator
+    - Clause comparison value
+    - Clause conjunctive
+    - Nested level
+    """
 
     NONE = 0
     WHERE = 1
@@ -48,23 +56,29 @@ class Clause :
         self.__level = level
 
     def column(self) :
+        """Get clause column. Can be column object or expression object."""
         return self.__column
 
     def operator(self) -> int :
+        """Get operator type."""
         return self.__operator
 
     def value(self) :
+        """Get clause comparison value."""
         return self.__value
 
     def conjunctive(self) -> int :
+        """Get clause conjunctive type."""
         return self.__conjunctive
 
     def level(self, input: int = -1) -> int :
+        """Get or set nested clause level. Negative for open parenthesis and positive for close parenthesis."""
         if input > -1 : self.__level = input
         return self.__level
 
     @classmethod
     def create(cls, clauseType: int, column, operator, value, conjunctive: int) :
+        """Create Clause object from column input, operator, value, and conjunctive for WHERE or HAVING query."""
         if isinstance(column, Expression) :
             columnObject = column
         else :
@@ -79,6 +93,7 @@ class Clause :
 
     @classmethod
     def getOperator(cls, operator) -> int :
+        """Get a valid operator option from input operator."""
         if isinstance(operator, int) :
             validOperator = operator
         else :
@@ -116,6 +131,7 @@ class Clause :
 
     @classmethod
     def getValue(cls, value, operator: int) :
+        """Check and get valid clause comparison value."""
         valid = True
         if operator == Clause.OPERATOR_BETWEEN or operator == Clause.OPERATOR_NOT_BETWEEN :
             if isinstance(value, Iterable) :
@@ -129,6 +145,7 @@ class Clause :
 
     @classmethod
     def getConjunctive(cls, clauseType: int, conjunctive: int) -> int :
+        """Get appropriate conjunctive from input conjunctive."""
         if clauseType == cls.clauseType :
             if conjunctive == Clause.CONJUNCTIVE_NONE :
                 if cls.nestedConjunctive == Clause.CONJUNCTIVE_NONE : return Clause.CONJUNCTIVE_AND

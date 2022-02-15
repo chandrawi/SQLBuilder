@@ -4,6 +4,12 @@ from ..Builder import BaseBuilder, DeleteBuilder
 from ..Structure import Table
 
 class Delete(BaseQuery, Clauses, Where, LimitOffset) :
+    """DELETE query manipulation class.
+    Components:
+    - Table
+    - Where clause
+    - Limit query
+    """
 
     def __init__(self, translator: int, bindingOption: int) :
         BaseQuery.__init__(self)
@@ -16,6 +22,7 @@ class Delete(BaseQuery, Clauses, Where, LimitOffset) :
         LimitOffset.__init__(self)
 
     def delete(self, table) :
+        """DELETE query table input"""
         if table :
             tableObject = Table.create(table)
             self.builder.setTable(tableObject)

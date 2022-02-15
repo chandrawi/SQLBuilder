@@ -1,6 +1,11 @@
 from .Column import Column
 
 class Order :
+    """Object for storing order of query result definition. Used in ORDER BY query
+    Object properties:
+    - Column object
+    - Oder type
+    """
 
     ORDER_NONE = 0
     ORDER_ASC = 1
@@ -11,19 +16,23 @@ class Order :
         self.__orderType = orderType
 
     def column(self) -> Column :
+        """Get order column."""
         return self.__column
 
     def orderType(self) -> int :
+        """Get order type."""
         return self.__orderType
 
     @classmethod
     def create(cls, column, orderType) :
+        """Create Order object from column inputs and order type for ORDER BY query."""
         columnObject = Column.create(column)
         validType = cls.getOrderType(orderType)
         return Order(columnObject, validType)
 
     @classmethod
     def getOrderType(cls, orderType) -> int :
+        """Get valid order type from input order type."""
         if isinstance(orderType, int) :
             validType = orderType
         else :

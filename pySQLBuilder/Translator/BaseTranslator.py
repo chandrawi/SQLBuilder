@@ -3,6 +3,10 @@ from ..Builder import BaseBuilder
 from ..Structure import Table, Column, Value, Clause, Order, Limit, Expression, Join
 
 class BaseTranslator :
+    """Translator base class.
+    Contain methods for translating builder object to query object.
+    Methods and class properties can be overload by a derived class for creating spesific database translator.
+    """
 
     def __init__(self) :
         self.quote_struct = "`"
@@ -15,6 +19,7 @@ class BaseTranslator :
         self.end_query = ""
 
     def firstKeyword(self, query: QueryObject, builderType: int) :
+        """Create first query keyword from builder type."""
         if builderType == BaseBuilder.SELECT :
             query.add('SELECT ')
         elif builderType == BaseBuilder.INSERT :
@@ -27,6 +32,7 @@ class BaseTranslator :
             query.add('SELECT DISTINCT ')
 
     def fromTable(self, query: QueryObject, table: Table) :
+        """Create "FROM `table` AS `alias`" expression"""
         name = table.name()
         alias = table.alias()
         query.add(' FROM ' + self.quote_struct)
@@ -36,18 +42,21 @@ class BaseTranslator :
             query.add(' AS ' + self.quote_string + alias + self.quote_string)
 
     def intoTable(self, query: QueryObject, table: Table) :
+        """Create "INTO `table`" expression"""
         name = table.name()
         query.add('INTO ' + self.quote_struct)
         query.add(name)
         query.add(self.quote_struct)
 
     def tableSet(self, query: QueryObject, table: Table) :
+        """Create "`table` SET" expression"""
         name = table.name()
         query.add(self.quote_struct)
         query.add(name)
         query.add(self.quote_struct)
 
     def columnsSelect(self, query: QueryObject, columns: tuple, count: int, multiTableFlag: bool = False) :
+        """Generate list of "FUNCTION(`table`.`column`) AS (`alias`)" for SELECT query"""
         if count == 0 :
             query.add('*')
             return
@@ -75,6 +84,7 @@ class BaseTranslator :
             if count > 0 : query.add(self.comma)
 
     def columnsInsert(self, query: QueryObject, values: tuple, count: int) :
+        """Generate list of "`column`" expression for INSERT query"""
         if count == 0 :
             query.add(' ' + self.open_bracket)
             query.add(self.close_bracket)
@@ -93,6 +103,7 @@ class BaseTranslator :
             query.add(self.close_bracket)
 
     def column(self, query: QueryObject, column: Column, multiTableFlag: bool = False) :
+        """Create "FUNCTION(`table`.`column`)" or "FUNCTION(`alias`)" expression"""
         table = column.table()
         name = column.name()
         alias = column.alias()
@@ -114,6 +125,7 @@ class BaseTranslator :
             query.add(self.close_bracket)
 
     def valuesInsert(self, query: QueryObject, values: tuple, count: int) :
+        """Generate list of "FUNCTION(`table`.`column`)" or "FUNCTION(`alias`)" expression for INSERT query"""
         query.add(' VALUES ')
         if count == 0 :
             query.add(self.open_bracket)
@@ -133,6 +145,7 @@ class BaseTranslator :
             if count > 0 : query.add(self.comma)
 
     def valuesUpdate(self, query: QueryObject, values: tuple, count: int, multiTableFlag: bool = False) :
+        """Generate list of "`table`.`column`=values" expression for UPDATE query"""
         query.add(' SET ')
         for value in values :
             if isinstance(value, Value) :
@@ -154,6 +167,7 @@ class BaseTranslator :
             if count > 1 : query.add(self.comma)
 
     def expression(self, query: QueryObject, expression: Expression) :
+        """Create user defined expression with param binding and alias."""
         params = expression.params()
         exps = expression.expression()
         alias = expression.alias()
@@ -166,6 +180,7 @@ class BaseTranslator :
             query.add(self.quote_struct)
 
     def join(self, query: QueryObject, joins: tuple) :
+        """Generate JOIN expression with join table and columns"""
         for join in joins :
             if isinstance(join, Join) :
                 joinType = self.joinType(join.joinType())
@@ -174,6 +189,7 @@ class BaseTranslator :
                 self.joinColumns(query, join.baseColumns(), join.joinColumns(), join.usingColumns())
 
     def joinType(self, joinType: int) -> str :
+        """Translate join type for join query"""
         if joinType == Join.INNER_JOIN :
             return ' INNER JOIN '
         elif joinType == Join.LEFT_JOIN :
@@ -186,6 +202,7 @@ class BaseTranslator :
             return ''
 
     def joinTable(self, query: QueryObject, joinTable: str, joinAlias: str) :
+        """Create "`table` AS `alias`" expression for JOIN query"""
         query.add(self.quote_struct)
         query.add(joinTable)
         if joinAlias :
@@ -193,6 +210,7 @@ class BaseTranslator :
         query.add(self.quote_struct)
 
     def joinColumns(self, query: QueryObject, baseColumns: tuple, joinColumns: tuple, usingColumns: tuple) :
+        """Create "USING(`column`)" or "ON `basetable`.`column`=`jointable`.`column`" expression for JOIN query"""
         count = len(usingColumns)
         if count :
             query.add(' USING ' + self.open_bracket)
@@ -210,6 +228,7 @@ class BaseTranslator :
                 self.column(query, joinColumns[i], True)
 
     def operator(self, operator: int) -> str :
+        """Translate operator for WHERE and HAVING query and comparison expression"""
         if operator == Clause.OPERATOR_EQUAL :
             return '='
         elif operator == Clause.OPERATOR_NOT_EQUAL :
@@ -242,6 +261,7 @@ class BaseTranslator :
             return ''
 
     def conjunctive(self, conjunctive: int) -> str :
+        """Translate conjunctive for WHERE and HAVING clause query"""
         if conjunctive == Clause.CONJUNCTIVE_AND :
             return ' AND '
         elif conjunctive == Clause.CONJUNCTIVE_OR :
@@ -254,6 +274,7 @@ class BaseTranslator :
             return ''
 
     def brackets(self, level: int) -> str :
+        """Get open or close bracket based on input level"""
         string = ''
         if level < 0 :
             for i in range(level, 0) :
@@ -264,6 +285,7 @@ class BaseTranslator :
         return string
 
     def where(self, query: QueryObject, whereClauses: tuple, count: int, multiTableFlag: bool = False) :
+        """Create "WHERE" expression and generate list of clause expression"""
         if count :
             query.add(' WHERE ')
             for where in whereClauses :
@@ -276,6 +298,7 @@ class BaseTranslator :
                     if nestedLevel > 0 : query.add(self.brackets(nestedLevel))
 
     def having(self, query: QueryObject, havingClauses: tuple, count: int, multiTableFlag: bool = False) :
+        """Create "HAVING" expression and generate list of clause expression"""
         if count :
             query.add(' HAVING ')
             for having in havingClauses :
@@ -288,6 +311,7 @@ class BaseTranslator :
                     if nestedLevel > 0 : query.add(self.brackets(nestedLevel))
 
     def clause(self, query: QueryObject, clause: Clause, multiTableFlag: bool = False) :
+        """Create clause expression which contain column, operator, and value"""
         column = clause.column()
         operator = clause.operator()
         value = clause.value()
@@ -303,17 +327,20 @@ class BaseTranslator :
             self.clauseComparison(query, value, operator)
 
     def clauseComparison(self, query: QueryObject, value, operator: int) :
+        """Create comparison expression in clause expression"""
         query.add(self.operator(operator))
         if operator != Clause.OPERATOR_NULL and operator != Clause.OPERATOR_NOT_NULL :
             query.add(value, True)
 
     def clauseBetween(self, query: QueryObject, value) :
+        """Create between expression in clause expression"""
         query.add(self.operator(Clause.OPERATOR_BETWEEN))
         query.add(value[0], True)
         query.add(' AND ')
         query.add(value[1], True)
 
     def clauseIn(self, query: QueryObject, value) :
+        """Create in expression in clause expression"""
         query.add(self.operator(Clause.OPERATOR_IN))
         query.add(self.open_bracket)
         count = len(value)
@@ -323,6 +350,7 @@ class BaseTranslator :
         query.add(self.close_bracket)
 
     def groupBy(self, query: QueryObject, groups: tuple, count: int, multiTableFlag: bool = False) :
+        """Create "GROUP BY " expression and generate list of column expression"""
         if count :
             query.add(' GROUP BY ')
             for group in groups :
@@ -332,6 +360,7 @@ class BaseTranslator :
                     if count > 0 : query.add(self.comma)
 
     def orderBy(self, query: QueryObject, orders: tuple, count: int, multiTableFlag: bool = False) :
+        """Create "ORDER BY `column` ASC|DESC" expression"""
         if count :
             query.add(' ORDER BY ')
             for order in orders :
@@ -345,6 +374,7 @@ class BaseTranslator :
                     if count > 0 : query.add(self.comma)
 
     def limitOffset(self, query: QueryObject, limitOffset: Limit, hasLimit: bool) :
+        """Create "OFFSET offsetValue" or "LIMIT limitValue, offsetValue" expression"""
         if hasLimit :
             limit = limitOffset.limit()
             offset = limitOffset.offset()
