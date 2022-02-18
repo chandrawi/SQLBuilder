@@ -10,7 +10,7 @@ class JoinTable :
     def __init__(self) :
         Join.table = ''
 
-    def __join(self, joinTable, joinType) :
+    def join(self, joinTable, joinType) :
         """Add Join object to join property of Builder object"""
         joinObject = Join.create(joinTable, joinType)
         if isinstance(self.builder, JoinBuilder) :
@@ -21,19 +21,19 @@ class JoinTable :
 
     def innerJoin(self, joinTable) :
         """INNER JOIN query. Takes join table name input"""
-        return self.__join(joinTable, Join.INNER_JOIN)
+        return self.join(joinTable, Join.INNER_JOIN)
 
     def leftJoin(self, joinTable) :
         """LEFT JOIN query. Takes join table name input"""
-        return self.__join(joinTable, Join.LEFT_JOIN)
+        return self.join(joinTable, Join.LEFT_JOIN)
 
     def rightJoin(self, joinTable) :
         """RIGHT JOIN query. Takes join table name input"""
-        return self.__join(joinTable, Join.RIGHT_JOIN)
+        return self.join(joinTable, Join.RIGHT_JOIN)
 
     def outerJoin(self, joinTable) :
         """OUTER JOIN query. Takes join table name input"""
-        return self.__join(joinTable, Join.OUTER_JOIN)
+        return self.join(joinTable, Join.OUTER_JOIN)
 
     def on(self, baseColumn, joinColumn) :
         """Add join columns and build ON query"""

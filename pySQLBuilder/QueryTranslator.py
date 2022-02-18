@@ -58,8 +58,12 @@ def getQuery(query: QueryObject, bindingOption: int) -> str :
                 if bindingMode : queryString += (mark + 'v' + str(i))
                 else : queryString += mark
             else :
-                if isinstance(params[i], str) : queryString += (quote + params[i] + quote)
-                else : queryString += str(params[i])
+                if isinstance(params[i], str) :
+                    queryString += (quote + params[i] + quote)
+                elif isinstance(params[i], (bytes, bytearray)) :
+                    queryString += (quote + str(params[i], 'utf-8') + quote)
+                else :
+                    queryString += str(params[i])
     return queryString
 
 def getParams(query: QueryObject, bindingOption: int) :

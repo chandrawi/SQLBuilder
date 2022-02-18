@@ -26,7 +26,10 @@ class Order :
     @classmethod
     def create(cls, column, orderType) :
         """Create Order object from column inputs and order type for ORDER BY query."""
-        columnObject = Column.create(column)
+        if isinstance(column, Column) :
+            columnObject = column
+        else :
+            columnObject = Column.create(column)
         validType = cls.getOrderType(orderType)
         return Order(columnObject, validType)
 

@@ -67,10 +67,10 @@ class Join :
         if isinstance(joinTable, Mapping) :
             key = next(iter(joinTable.keys()))
             joinAlias = str(key)
-            joinObject = Join(validType, Table.table, str(joinTable[key]), joinAlias)
+            joinObject = Join(validType, Table.table, cls.getTable(joinTable[key]), joinAlias)
             Table.table = joinAlias
         else :
-            joinTable = str(joinTable)
+            joinTable = cls.getTable(joinTable)
             joinObject = Join(validType, Table.table, joinTable)
             Table.table = joinTable
         return joinObject
@@ -93,6 +93,15 @@ class Join :
             else :
                 validType = Join.NO_JOIN
         return validType
+
+    @classmethod
+    def getTable(cls, table) -> str :
+        validTable = ''
+        if isinstance(table, str) :
+            validTable += table
+        elif isinstance(table, (bytes, bytearray)) :
+            validTable += str(table, 'utf-8')
+        return validTable
 
     def addColumn(self, baseColumn, joinColumn = None) :
         """Add columns object property to a join table object."""

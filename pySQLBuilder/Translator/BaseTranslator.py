@@ -164,7 +164,7 @@ class BaseTranslator :
                     countVals -= 1
                     if countVals > 0 : query.add(self.comma)
             count -= 1
-            if count > 1 : query.add(self.comma)
+            if count > 0 : query.add(self.comma)
 
     def expression(self, query: QueryObject, expression: Expression) :
         """Create user defined expression with param binding and alias."""
@@ -215,9 +215,9 @@ class BaseTranslator :
         if count :
             query.add(' USING ' + self.open_bracket)
             for column in usingColumns :
-                self.column(query, column, True)
+                self.column(query, column)
                 count -= 1
-                if count > 1 : query.add(self.comma)
+                if count > 0 : query.add(self.comma)
             query.add(self.close_bracket)
         else :
             for i in range(len(baseColumns)) :

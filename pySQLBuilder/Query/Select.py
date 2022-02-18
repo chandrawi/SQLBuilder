@@ -2,7 +2,7 @@ from .BaseQuery import BaseQuery
 from .Component import Clauses, Where, Having, GroupBy, OrderBy, LimitOffset, JoinTable
 from ..Builder import BaseBuilder, SelectBuilder
 from ..Structure import Table, Column, Expression
-from typing import Iterable, Mapping
+from typing import Iterable
 
 class Select(BaseQuery, Clauses, Where, Having, GroupBy, OrderBy, LimitOffset, JoinTable) :
     """SELECT query manipulation class.
@@ -54,17 +54,8 @@ class Select(BaseQuery, Clauses, Where, Having, GroupBy, OrderBy, LimitOffset, J
         
         Takes a list containing column name or a dictionary with keys as column alias.
         """
-        columnObjects = ()
-        if isinstance(columns, str) :
-            columnObjects += (Column.create(columns),)
-        elif isinstance(columns, Mapping) :
-            for key in columns.keys() :
-                columnObjects += (Column.create({key: columns[key]}),)
-        elif isinstance(columns, Iterable) :
-            for col in columns :
-                columnObjects += (Column.create(col),)
-        for col in columnObjects :
-            self.builder.addColumn(col)
+        for columnObject in Column.createMulti(columns) :
+            self.builder.addColumn(columnObject)
         return self
 
     def columnExpression(self, expression, alias, params: Iterable = ()) :

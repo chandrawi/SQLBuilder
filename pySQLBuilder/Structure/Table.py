@@ -27,9 +27,11 @@ class Table :
         name = ''
         alias = ''
         if isinstance(table, str) :
-            cls.table = table
             name = table
-            return Table(table)
+            cls.table = table
+        elif isinstance(table, (bytes, bytearray)) :
+            name = str(table, 'utf-8')
+            cls.table = name
         elif isinstance(table, Mapping) and len(table) == 1 :
             key = next(iter(table.keys()))
             name = str(table[key])

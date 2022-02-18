@@ -11,7 +11,7 @@ sql.binding = sql.PARAM_NUM
 
 builder = sql \
     .select('table') \
-    .orderByAsc('col1') \
+    .orderByAsc(['col1', 'col3']) \
     .orderByDesc('col2') \
     .limit(25, 50)
 builderObject = builder.getBuilder()

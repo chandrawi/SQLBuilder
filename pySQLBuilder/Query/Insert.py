@@ -2,7 +2,6 @@ from .BaseQuery import BaseQuery
 from .Component import LimitOffset
 from ..Builder import BaseBuilder, InsertBuilder
 from ..Structure import Table, Value
-from typing import Iterable
 
 class Insert(BaseQuery, LimitOffset) :
     """INSERT query manipulation class.
@@ -42,10 +41,6 @@ class Insert(BaseQuery, LimitOffset) :
         
         Takes list of dictionary with keys as column.
         """
-        valuesObjects = ()
-        if isinstance(multiValues, Iterable) :
-            for val in multiValues :
-                valuesObjects += (Value.create(val),)
-        for val in valuesObjects :
-            self.builder.addValue(val)
+        for valueObject in Value.createMulti(multiValues) :
+            self.builder.addValue(valueObject)
         return self

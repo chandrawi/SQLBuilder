@@ -1,5 +1,5 @@
 from .Table import Table
-from typing import Mapping
+from typing import Iterable, Mapping
 
 class Column :
     """Object for storing a column definition.
@@ -39,15 +39,33 @@ class Column :
         name = ''
         function = ''
         alias = ''
-        if isinstance(column, str) :
+        if isinstance(column, (str, bytes, bytearray)) :
             (table, name, function) = cls.parseStr(column)
         elif isinstance(column, Mapping) :
             (table, name, function, alias) = cls.parseMap(column)
         return Column(table, name, function, alias)
 
     @classmethod
-    def parseStr(cls, column: str) -> tuple :
+    def createMulti(cls, columns) :
+        """Create multiple Column objects."""
+        columnObjects = ()
+        if isinstance(columns, (str, bytes, bytearray)) :
+            columnObjects = (cls.create(columns),)
+        elif isinstance(columns, Mapping) :
+            for key in columns.keys() :
+                columnObjects += (Column.create({key: columns[key]}),)
+        elif isinstance(columns, Iterable) :
+            for col in columns :
+                columnObjects += (cls.create(col),)
+        return columnObjects
+
+    @classmethod
+    def parseStr(cls, column) -> tuple :
         """Parsing string input column to table, column name, and aggregate function."""
+        if isinstance(column, (bytes, bytearray)) :
+            column = str(column, 'utf-8')
+        elif not isinstance(column, str) :
+            return ('', '', '')
         function = ''
         pos1 = column.find('(')
         pos2 = column.rfind(')')
@@ -76,8 +94,7 @@ class Column :
         if len(column) == 1 :
             key = next(iter(column.keys()))
             alias = str(key)
-            columnStr = str(column[key])
-            (table, name, function) = cls.parseStr(columnStr)
+            (table, name, function) = cls.parseStr(column[key])
             return (table, name, function, alias)
         else :
             return ('', '', '', '')

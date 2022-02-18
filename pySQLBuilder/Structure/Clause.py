@@ -79,7 +79,7 @@ class Clause :
     @classmethod
     def create(cls, clauseType: int, column, operator, value, conjunctive: int) :
         """Create Clause object from column input, operator, value, and conjunctive for WHERE or HAVING query."""
-        if isinstance(column, Expression) :
+        if isinstance(column, (Expression, Column)) :
             columnObject = column
         else :
             columnObject = Column.create(column)

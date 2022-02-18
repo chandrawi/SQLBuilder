@@ -15,10 +15,8 @@ class Value :
         lenVal = len(values)
         lenMin = lenCol
         if lenCol > lenVal : lenMin = lenVal
-        self.__columns = ()
+        self.__columns = columns[:lenMin]
         self.__values = values[:lenMin]
-        for i in range(lenMin) :
-            self.__columns += (str(columns[i]),)
 
     def table(self) -> str :
         """Get table name of values"""
@@ -38,25 +36,44 @@ class Value :
         columns = ()
         values = ()
         if isinstance(inputValue, Mapping) :
-            columns = tuple(inputValue.keys())
+            for key in inputValue.keys() :
+                columns += (cls.getColumn(key),)
             values = tuple(inputValue.values())
         elif isinstance(inputValue, Iterable) :
             (columns, values) = cls.parsePair(inputValue)
         return Value(Table.table, columns, values)
 
     @classmethod
+    def createMulti(cls, inputValues) :
+        """Create multiple Value objects."""
+        valuesObjects = ()
+        if isinstance(inputValues, Iterable) :
+            for val in inputValues :
+                valuesObjects += (cls.create(val),)
+        return valuesObjects
+
+    @classmethod
     def parsePair(cls, pairs: Iterable) -> tuple :
         """Parsing column and value pair from input array."""
-        if isinstance(pairs[0], str) and len(pairs) == 2 :
+        if isinstance(pairs[0], (str, bytes, bytearray)) and len(pairs) == 2 :
             return ((pairs[0],), (pairs[1],))
         columns = ()
         values = ()
         for pair in pairs :
             if isinstance(pair, Mapping) and len(pair) :
                 key = next(iter(pair.keys()))
-                columns += (key,)
+                columns += (cls.getColumn(key),)
                 values += (pair[key],)
             elif isinstance(pair, Iterable) and len(pair) == 2 :
-                columns += (pair[0],)
+                columns += (cls.getColumn(pair[0]),)
                 values += (pair[1],)
         return (columns, values)
+
+    @classmethod
+    def getColumn(cls, column) -> str :
+        validColumn = ''
+        if isinstance(column, str) :
+            validColumn = column
+        elif isinstance(column, (bytes, bytearray)) :
+            validColumn = str(column, 'utf-8')
+        return validColumn
