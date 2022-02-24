@@ -16,7 +16,7 @@ binding option:
 - PARAM_ASSOC
 """
 
-__version__ = '1.1.0'
+__version__ = '1.2.0'
 
 from .Constant import *
 from .Query import Select, Insert, Update, Delete
